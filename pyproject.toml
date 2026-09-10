@@ -1,0 +1,30 @@
+[project]
+name = "understudy"
+version = "0.1.0"
+description = "Computer-use automation: an LLM discovers a legacy-UI flow once; a typed artifact replays it deterministically."
+requires-python = ">=3.12"
+dependencies = [
+    "playwright>=1.60",
+    "pydantic>=2.7",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "openai>=1.50",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "httpx>=0.27"]
+
+[project.scripts]
+understudy = "understudy.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+timeout = 120

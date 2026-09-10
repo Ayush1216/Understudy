@@ -1,0 +1,21 @@
+# Operator-side policy. THIS is the security boundary.
+#
+# A capability artifact carries a `policy_declaration` that is a REQUEST. The effective
+# policy for a run is the INTERSECTION of this file and that declaration: an artifact can
+# narrow what the operator grants, never widen it. An artifact that declares
+# require_approval_for = [] still gets the approval gate below.
+
+[allow]
+origins = ["http://localhost:4599", "http://127.0.0.1:4599"]
+path_patterns = ["/t/*/**"]
+action_types = ["navigate", "click", "type", "select", "press", "wait", "assert", "extract"]
+
+[risk]
+# safe < sensitive < irreversible
+max_risk = "irreversible"
+require_approval_for = ["irreversible"]
+
+[limits]
+replay_timeout_ms = 120000
+discovery_timeout_ms = 600000
+max_steps = 60
