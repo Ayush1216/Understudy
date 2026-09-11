@@ -1,0 +1,51 @@
+{
+  "alpha.member.balance@1.0.0": {
+    "base": {
+      "business_outcomes": 3,
+      "escalations": 0,
+      "failures": 5,
+      "last_run_at": "2026-09-11T01:23:46.115278+00:00",
+      "last_winning_rungs": {
+        "s1": 0,
+        "s2": 0,
+        "s3": 0,
+        "s4": 0,
+        "s5": 0,
+        "s6": 0
+      },
+      "runs": 15,
+      "successes": 7
+    },
+    "beta": {
+      "business_outcomes": 0,
+      "escalations": 0,
+      "failures": 1,
+      "last_run_at": "2026-09-11T01:23:47.894005+00:00",
+      "last_winning_rungs": {
+        "s1": 0,
+        "s2": 0,
+        "s3": 0,
+        "s4": 0,
+        "s5": 0,
+        "s6": 0
+      },
+      "runs": 3,
+      "successes": 2
+    }
+  },
+  "alpha.share.open@1.0.0": {
+    "base": {
+      "business_outcomes": 6,
+      "escalations": 3,
+      "failures": 0,
+      "last_run_at": "2026-09-11T01:23:54.076431+00:00",
+      "last_winning_rungs": {
+        "s1": 0,
+        "s2": 0,
+        "s3": 0
+      },
+      "runs": 10,
+      "successes": 1
+    }
+  }
+}

@@ -71,6 +71,7 @@ def alpha_capability(base_url: str, *, with_beta: bool = False, **overrides: Any
         beta = beta_override_dict()
         beta["entry_url"] = f"{base_url}/t/beta/"
         d["tenant_overrides"] = {"beta": beta}
+        d["policy_declaration"]["path_patterns"] = ["/t/*/**"]  # every tenant's paths; the override has no policy field
     d.update(overrides)
     return Capability.model_validate(d)
 

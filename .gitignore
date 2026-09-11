@@ -6,3 +6,5 @@ __pycache__/
 .env
 evidence/runs/_scratch*/
 .DS_Store
+githubLinks.md
+*.pdf

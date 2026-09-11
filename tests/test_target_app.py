@@ -183,7 +183,7 @@ async def test_review_then_confirm_creates_a_share_that_appears_on_the_record():
         assert hidden["share_type"] == "Money Market" and hidden["f1"] == "100.00"
         r = await c.post(action, data=hidden)
         assert r.status_code == 200 and "SUB-ACCOUNT CREATED" in r.text
-        assert re.search(r"Reference Number: SA-100234-\d{4}", r.text)
+        assert re.search(r"Reference Number:.*SA-100234-\d{4}", r.text)
         new_id = f"100234-S{before + 1:04d}"
         assert new_id in r.text
         r = await c.get("/t/alpha/members/100234")

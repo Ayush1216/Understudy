@@ -79,12 +79,18 @@ async def frame_tree(page: Page) -> list[tuple[list[str], Frame, str | None]]:
 async def find_frame(page: Page, path: list[str]) -> Frame | None:
     frame = page.main_frame
     for seg in path:
+        # Detached children linger in child_frames after the frameset is replaced (a human
+        # navigating from the operator console does exactly that), and the dead one is listed
+        # first. Matching it hands back a frame whose every call raises "Frame was detached".
+        match = None
         for child in frame.child_frames:
+            if child.is_detached():
+                continue
             if await frame_name(child) == seg:
-                frame = child
-                break
-        else:
+                match = child
+        if match is None:
             return None
+        frame = match
     return frame
 
 

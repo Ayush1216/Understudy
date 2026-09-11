@@ -61,10 +61,10 @@ def effective_policy(operator: OperatorPolicy, declaration: PolicyDeclaration | 
     action types intersect, both path lists are kept and ANDed, `max_risk` is the lower of the
     two, `require_approval_for` is the union, limits are the operator's alone.
 
-    This is the fix for the reference implementation's worst flaw: it built its engine from
-    `capability.policy`, so a funds-transfer artifact shipping `require_approval_for: []`
-    posted an irreversible transaction with no approval gate. The thing under review cannot
-    also decide how carefully it is reviewed.
+    Building the engine from the artifact alone would put the security boundary inside the
+    thing being reviewed: an artifact shipping `require_approval_for: []` would post an
+    irreversible transaction with no gate at all. So the artifact's block is a request, and
+    this is where it is granted — never more than the operator already allows.
     """
     fields = operator.model_dump()
     fields["path_patterns"] = [operator.path_patterns]

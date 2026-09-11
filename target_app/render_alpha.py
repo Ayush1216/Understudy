@@ -179,9 +179,9 @@ def review(s: Session, m: Member, share_type: str, deposit: Decimal, token: str)
 
 def confirmed(s: Session, m: Member, share: Share, ref: str) -> str:
     body = (
-        h1("SUB-ACCOUNT CREATED") + f(f"<b>Reference Number: {ref}</b>")
-        + '<br><br><table border="0" cellpadding="2">'
-        + row("Member No.:", m.number) + row("Share ID:", share.id) + row("Type:", share.type)
+        h1("SUB-ACCOUNT CREATED")
+        + '<table border="0" cellpadding="2">'
+        + row("Reference Number:", ref) + row("Member No.:", m.number) + row("Share ID:", share.id) + row("Type:", share.type)
         + row("Balance:", money(share.balance)) + row("Status:", share.status)
         + "</table><br>" + a(f"{BASE}/members/{m.number}", "Return to Member Record")
     )

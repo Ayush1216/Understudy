@@ -168,4 +168,7 @@ def member_balance(**overrides: Any) -> Capability:
 
 
 def member_balance_with_beta() -> Capability:
-    return member_balance(tenant_overrides={"beta": beta_override_dict()})
+    # The override moves entry_url to /t/beta/ and CapabilityOverride carries no policy, so the
+    # base declaration must request every tenant's paths.
+    policy = {**member_balance_dict()["policy_declaration"], "path_patterns": ["/t/*/**"]}
+    return member_balance(tenant_overrides={"beta": beta_override_dict()}, policy_declaration=policy)

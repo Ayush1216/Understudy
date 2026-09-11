@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Understudy console</title>
+<style>
+  body { margin: 0; font: 13px/1.4 system-ui, sans-serif; color: #1a1a1a; background: #f4f4f2; }
+  header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; background: #fff; border-bottom: 1px solid #ddd; }
+  header b { font-size: 15px; }
+  .tag { padding: 1px 8px; border-radius: 10px; background: #e8e8e4; font-size: 12px; }
+  .badge { padding: 2px 10px; border-radius: 4px; font-weight: 600; color: #fff; background: #2b6cb0; }
+  .badge.human { background: #c53030; }
+  main { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(520px, 1.4fr); gap: 16px; padding: 16px; }
+  section, aside > div { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; }
+  h2 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #555; }
+  #events { max-height: calc(100vh - 120px); overflow: auto; font-family: ui-monospace, monospace; font-size: 12px; }
+  #events div { padding: 2px 4px; border-bottom: 1px solid #f0f0ee; white-space: pre-wrap; word-break: break-word; }
+  #events .seq { color: #999; margin-right: 6px; }
+  #events .type { font-weight: 600; margin-right: 6px; }
+  .red { color: #b91c1c; } .amber { color: #b45309; } .blue { color: #1d4ed8; }
+  #card { margin-bottom: 16px; border-color: #c53030; }
+  #card dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0; }
+  #card dt { color: #666; } #card dd { margin: 0; white-space: pre-wrap; }
+  #card img { max-width: 100%; max-height: 220px; border: 1px solid #ddd; margin: 8px 0; }
+  #card textarea { width: 100%; box-sizing: border-box; height: 48px; margin: 6px 0; }
+  button { padding: 5px 12px; margin-right: 6px; border: 1px solid #999; border-radius: 4px; background: #fff; cursor: pointer; }
+  button:disabled { opacity: .4; cursor: default; }
+  button.primary { background: #2b6cb0; color: #fff; border-color: #2b6cb0; }
+  button.danger { background: #c53030; color: #fff; border-color: #c53030; }
+  #frame { display: block; width: 100%; border: 2px solid #ddd; outline: none; background: #eee; min-height: 200px; }
+  #frame:focus { border-color: #2b6cb0; }
+  #nav { display: flex; gap: 6px; margin-bottom: 8px; } #nav input { flex: 1; padding: 4px 6px; }
+  .hint { color: #666; margin: 6px 0 0; } #status { color: #b91c1c; min-height: 1.2em; }
+</style>
+</head>
+<body>
+<header>
+  <b id="label">…</b> <span id="kind" class="tag"></span> <span id="run_id" class="tag"></span>
+  <span id="control" class="badge">AUTOMATION</span>
+  <span id="alive" class="tag" hidden>page closed</span>
+</header>
+<main>
+  <section>
+    <h2>Timeline</h2>
+    <div id="events"></div>
+  </section>
+  <aside>
+    <div id="card" hidden>
+      <h2>Intervention <span id="iv_id"></span> · <span id="iv_status"></span></h2>
+      <dl>
+        <dt>Reason</dt><dd id="iv_reason"></dd>
+        <dt>Step</dt><dd id="iv_step"></dd>
+        <dt>Detail</dt><dd id="iv_detail"></dd>
+        <dt>Expected</dt><dd id="iv_expected"></dd>
+        <dt>Observed</dt><dd id="iv_observed"></dd>
+        <dt>Page</dt><dd id="iv_page"></dd>
+      </dl>
+      <img id="iv_shot" alt="evidence screenshot" hidden>
+      <textarea id="note" placeholder="Note for the record (what you did, why)"></textarea>
+      <div>
+        <button id="claim" class="primary">Take control</button>
+        <button id="approve" hidden>Approve</button>
+        <button id="resume">Resume</button>
+        <button id="abort" class="danger">Abort</button>
+      </div>
+    </div>
+    <div>
+      <h2>Live page</h2>
+      <div id="nav"><input id="url" placeholder="Navigate the live page to a URL (policy-checked)"><button id="go">Go</button></div>
+      <img id="frame" tabindex="0" alt="live frame of the run's page">
+      <p class="hint">Click the frame to focus it; keys and scrolling are forwarded to the live page. Input is refused until you take control.</p>
+      <p id="status"></p>
+    </div>
+  </aside>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const focusId = new URLSearchParams(location.search).get('intervention');
+const COLOR = {'policy.decision': e => e.decision === 'deny' ? 'red' : '', 'escalation.raised': () => 'red',
+               'recovery.applied': () => 'amber', 'outcome.matched': () => 'blue', 'human.resolved': () => 'blue'};
+const HEADER = new Set(['ts', 'run_id', 'seq', 'type']);
+let lastSeq = 0, current = null;
+
+function addEvent(e) {
+  if (e.seq <= lastSeq) return;           // history and live can overlap by one event
+  lastSeq = e.seq;
+  const row = document.createElement('div');
+  row.className = (COLOR[e.type] || (() => ''))(e);
+  const bits = Object.entries(e).filter(([k, v]) => !HEADER.has(k) && v !== null && typeof v !== 'object')
+    .map(([k, v]) => `${k}=${typeof v === 'string' ? v : JSON.stringify(v)}`).join('  ');
+  row.innerHTML = `<span class="seq">${e.seq}</span><span class="type">${e.type}</span>`;
+  row.append(bits);
+  const box = $('events'), stick = box.scrollTop + box.clientHeight >= box.scrollHeight - 4;
+  box.append(row);
+  if (stick) box.scrollTop = box.scrollHeight;
+}
+new EventSource('/api/events').onmessage = m => addEvent(JSON.parse(m.data));
+
+async function refresh() {
+  const r = await (await fetch('/api/run')).json();
+  $('label').textContent = r.label; $('kind').textContent = r.kind; $('run_id').textContent = r.run_id;
+  $('control').textContent = r.control.holder.toUpperCase();
+  $('control').className = 'badge ' + (r.control.holder === 'human' ? 'human' : '');
+  $('alive').hidden = r.alive;
+  const open = r.interventions.filter(i => !i.resolution);
+  current = r.interventions.find(i => i.id === focusId && !i.resolution) || open[open.length - 1]
+         || r.interventions.find(i => i.id === focusId) || null;
+  renderCard();
+}
+
+function renderCard() {
+  const c = current; $('card').hidden = !c;
+  if (!c) return;
+  $('iv_id').textContent = c.id; $('iv_status').textContent = c.status;
+  $('iv_reason').textContent = c.reason;
+  $('iv_step').textContent = c.at_step_id ? `${c.at_step_id} — ${c.step_description || ''}` : (c.goal || '');
+  $('iv_detail').textContent = c.detail || '';
+  $('iv_expected').textContent = c.expected || '—'; $('iv_observed').textContent = c.observed || '—';
+  $('iv_page').textContent = `${c.context.title || ''} ${c.context.url}`;
+  $('iv_shot').hidden = !c.context.screenshot_path;
+  if (c.context.screenshot_path) $('iv_shot').src = `/api/interventions/${c.id}/screenshot`;
+  const done = !!c.resolution;
+  $('claim').disabled = c.status !== 'open';
+  $('approve').hidden = c.reason !== 'RISKY_ACTION_APPROVAL';
+  for (const b of ['approve', 'resume', 'abort']) $(b).disabled = done;
+}
+
+async function post(path, body) {
+  const r = await fetch(path, {method: 'POST', headers: {'content-type': 'application/json'}, body: body && JSON.stringify(body)});
+  if (!r.ok) $('status').textContent = (await r.json()).detail || r.statusText;
+  await refresh();
+}
+$('claim').onclick = () => post(`/api/interventions/${current.id}/claim`);
+for (const d of ['approve', 'resume', 'abort'])
+  $(d).onclick = () => post(`/api/interventions/${current.id}/resolve`, {decision: d, note: $('note').value});
+
+// Live frame: the server pushes JPEG blobs; input goes back as fractions of the image.
+const frame = $('frame');
+let ws, lastUrl = null;
+function connect() {
+  ws = new WebSocket(`ws://${location.host}/ws/live`);
+  ws.onmessage = m => {
+    if (m.data instanceof Blob) {
+      if (lastUrl) URL.revokeObjectURL(lastUrl);
+      frame.src = lastUrl = URL.createObjectURL(m.data);
+    } else {
+      const r = JSON.parse(m.data);
+      $('status').textContent = r.error || '';
+    }
+  };
+  ws.onclose = () => setTimeout(connect, 1000);
+}
+const send = msg => ws && ws.readyState === 1 && ws.send(JSON.stringify(msg));
+frame.onclick = e => {
+  frame.focus();
+  const r = frame.getBoundingClientRect();
+  send({t: 'click', x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height});
+};
+frame.onkeydown = e => {
+  e.preventDefault();
+  if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) send({t: 'type', text: e.key});
+  else send({t: 'key', key: e.key});
+};
+frame.onwheel = e => { e.preventDefault(); send({t: 'wheel', dy: e.deltaY}); };
+$('go').onclick = () => send({t: 'navigate', url: $('url').value});
+
+connect();
+refresh();
+setInterval(refresh, 2000);  // control returns to automation after the resolve, so poll rather than trust one event
+</script>
+</body>
+</html>
