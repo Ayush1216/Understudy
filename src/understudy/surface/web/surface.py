@@ -292,6 +292,19 @@ class WebSurface:
             parts.append(f"<!-- frame /{'/'.join(path)} {frame.url} -->\n{html}")
         return "\n".join(parts)
 
+    async def visible_text(self, frame_path: list[str] | None = None) -> str:
+        self._guard("visible_text")
+        wanted = mapped_path(frame_path, self._vocab.frame_map) if frame_path is not None else None
+        parts: list[str] = []
+        for path, frame, _ in await frame_tree(self.page):
+            if wanted is not None and path != wanted:
+                continue
+            try:
+                parts.append(await frame.evaluate("() => (document.body && document.body.innerText) || ''"))
+            except Error:
+                continue
+        return "\n".join(parts)
+
     # ---- descriptors --------------------------------------------------------------------------
 
     async def capture_descriptor(self, ref: str, observation: Observation, *, intent: Intent) -> TargetDescriptor:

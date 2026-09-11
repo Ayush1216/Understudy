@@ -190,6 +190,11 @@ class Surface(Protocol):
 
     async def dom_snapshot(self) -> str: ...
 
+    async def visible_text(self, frame_path: list[str] | None = None) -> str:
+        """Full visible text of one frame (None = every frame, joined). Checkpoints evaluate
+        against this, never against the model-facing digest, which is size-capped."""
+        ...
+
     async def capture_descriptor(
         self, ref: str, observation: Observation, *, intent: Intent
     ) -> TargetDescriptor:

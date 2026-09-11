@@ -22,7 +22,8 @@ ErrorClass = Literal[
     "PRECONDITION_FAILED",  # wrong page state going into a step
     "CHECKPOINT_FAILED",    # asserted state never materialized (postcondition, assert, success,
                             # or a required output was empty)
-    "TIMEOUT",              # run wall clock exceeded (human wait excluded)
+    "TIMEOUT",              # run wall clock exceeded (human wait excluded), or a step's action
+                            # budget exhausted after its retries
     "SURFACE_ERROR",        # the application broke: 5xx, or its own error page
     "CONTROL_LOST",         # a human holds the session
     "INTERNAL",
