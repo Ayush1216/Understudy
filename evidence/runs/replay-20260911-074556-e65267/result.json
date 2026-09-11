@@ -1,0 +1,16 @@
+{
+  "run_id": "replay-20260911-074556-e65267",
+  "capability": {
+    "id": "cap_alpha_share_open",
+    "name": "alpha.share.open",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 977,
+  "evidence_dir": "evidence/runs/replay-20260911-074556-e65267",
+  "status": "success",
+  "outputs": {
+    "reference_number": "SA-1***7-0001"
+  },
+  "steps_executed": 9
+}

@@ -37,8 +37,13 @@ run "escalated RISKY_ACTION_APPROVAL at s8 — nobody there to approve Confirm" 
 run "business_outcome DEPOSIT_TOO_SMALL (legitimate answer; exit 0)"           0 python -m understudy replay $SHARE --input member_number=100234 --input deposit=10
 run "business_outcome PERMISSION_DENIED (legitimate answer; exit 0)"           0 python -m understudy replay $SHARE --input member_number=103001 --input deposit=50
 
+# Last: this one creates a share, and a later balance read on the same member would then match
+# two "Regular Shares" rows and refuse rather than guess.
+run "success — a scripted operator took the live session, clicked Confirm by hand, and resumed" 0 python scripts/operator_takeover.py
+
 echo
-echo "== interactive: escalation with a human takeover. --console mounts the operator UI on the"
-echo "   run's own event loop and prints its URL; the run parks on the irreversible Confirm until"
-echo "   you claim the intervention and approve (or abort) it there. Exit 2 if nobody answers."
+echo "== interactive: the same escalation with a real person. --console mounts the operator UI on"
+echo "   the run's own event loop and prints its URL; the run parks on the irreversible Confirm"
+echo "   until you claim the intervention and approve, drive the live page yourself and resume, or"
+echo "   abort. Exit 2 if nobody answers."
 echo "   python -m understudy replay $SHARE --input member_number=100234 --input deposit=50 --console"

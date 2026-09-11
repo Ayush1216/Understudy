@@ -1,0 +1,16 @@
+{
+  "intervention_id": "iv_abc9a788f2",
+  "human_actions": [
+    {
+      "kind": "click",
+      "at": "2026-09-11T07:45:57.364804Z",
+      "x": 35.3359375,
+      "y": 218.5
+    }
+  ],
+  "resolution": {
+    "at": "2026-09-11T07:45:57.683191Z",
+    "decision": "resume",
+    "note": "opened the share by hand on the live session"
+  }
+}

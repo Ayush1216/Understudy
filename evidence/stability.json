@@ -56,18 +56,17 @@
       "business_outcomes": 2,
       "escalations": 1,
       "failures": 0,
-      "last_run_at": "2026-09-11T03:53:32.466021+00:00",
+      "last_run_at": "2026-09-11T07:45:57.735848+00:00",
       "last_winning_rungs": {
         "s1": 0,
         "s2": 0,
         "s3": 0,
         "s5": 0,
         "s6": 0,
-        "s7": 0,
-        "s8": 0
+        "s7": 0
       },
-      "runs": 4,
-      "successes": 1
+      "runs": 5,
+      "successes": 2
     }
   }
 }

@@ -31,8 +31,15 @@ pip install -e ".[dev]"
 python -m playwright install chromium
 ```
 
+Copy the environment file — every command needs it, because the target application's demo
+credentials live there:
+
+```bash
+cp .env.example .env
+```
+
 **Everything below runs offline except the discovery run.** Only `understudy discover` needs a
-model. For that, copy `.env.example` to `.env` and add a key:
+model, and it is the only reason to fill in `LLM_API_KEY`:
 
 ```bash
 LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
@@ -62,6 +69,13 @@ Or step through it yourself. Start the target application first:
 
 ```bash
 python -m understudy app            # http://localhost:4599
+```
+
+`alpha.share.open` really creates sub-accounts, so if you run the commands below out of order,
+return the app to a clean slate first — `demo.sh` does this for you:
+
+```bash
+curl -X POST http://localhost:4599/_reset      # clears injected faults, counters and data
 ```
 
 ### 1. Discovery — the model drives the real UI (needs a key)
@@ -134,6 +148,19 @@ or Abort. Approving completes the run and returns `{"reference_number": "SA-1009
 share really exists afterwards. Aborting leaves the transaction unperformed, which is asserted
 against the live application in `tests/test_escalation.py`, not merely against a status field.
 
+To see the *takeover* half without a person at the keyboard:
+
+```bash
+python scripts/operator_takeover.py
+```
+
+A scripted operator claims the intervention, clicks **Confirm** on the live page over the
+console's WebSocket, and hands control back with `resume`. Replay re-evaluates the
+postcondition, finds the share already open, and advances **without re-running the irreversible
+step** — `resume_branch: postcondition_satisfied` in `run.jsonl`, and no `s8` in `drift.summary`.
+The operator is scripted; the control lease, the console routes and the human-action record it
+goes through are the real ones. Committed as `evidence/runs/replay-20260911-074556-e65267`.
+
 Its business outcomes are reachable too:
 
 ```bash
@@ -205,6 +232,7 @@ src/understudy/
   console/    one FastAPI app and one HTML page: run timeline + live-session takeover
   catalog/    name@version catalog and the JSON-Schema tool export
 config/policy.toml    operator-side policy — the security boundary
+scripts/              demo.sh (the whole offline thread) and operator_takeover.py (a scripted human)
 capabilities/         the artifacts
 evidence/             committed runs; see evidence/README.md
 ```
@@ -222,8 +250,9 @@ control-transfer model, and every result in `evidence/`.
 **Mocked, deliberately:** the *target application* stands in for a bank's back office — the brief
 rules out using a real one. The operator console's live view is a JPEG frame pushed over a
 WebSocket with coordinate and keystroke forwarding, not a co-browsing stack; production wants CDP
-screencast or WebRTC. **The control-transfer model underneath it is real and tested** — the human
-drives the same `Page` object the automation was using, and automation's next action raises
+screencast or WebRTC. The operator in the committed takeover run is a script, so the run
+reproduces unattended. **The control-transfer model underneath both is real and tested** — the
+human drives the same `Page` object the automation was using, and automation's next action raises
 `ControlLost` while they hold it.
 
 **Not built**, with the seam left clean: a desktop surface (the `Surface` Protocol is that seam —

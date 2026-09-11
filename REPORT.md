@@ -159,6 +159,12 @@ the wall clock** — a careful reviewer must not cause the next step to time out
 for anything that is not a risky-action approval: approving a stuck step would just re-run it and
 burn the escalation budget.
 
+Both halves are in `/evidence/`: one run where the operator *approved* the irreversible step, and
+one where the operator *took the session and performed it by hand* — `human_actions` non-empty,
+`resume_branch: postcondition_satisfied`, and no `s8` in that run's `drift.summary`, because the
+step was never re-run. The second operator is a script (`scripts/operator_takeover.py`) so the run
+reproduces unattended; it drives the real console routes and leaves the real record.
+
 **Cut, and named:** the live view is a screenshot poll with input forwarding, not a co-browsing
 stack, and the console has no authentication — it binds to loopback, an accepted single-operator
 trade-off. The control-transfer model is real and tested.
@@ -194,39 +200,31 @@ deny-list shaped, so an undeclared PII field could still reach evidence. And not
 a malicious artifact; artifacts are trusted input, which is why `approval` exists and why the agent
 path refuses drafts.
 
-## 7. Cuts, and what the real runs changed
+## 7. Cuts
 
 **Not built**, seams left clean: a desktop surface (the Protocol is that seam, §4), real
-co-browsing, a chatbot front door, queues/workers/containers, console authentication, a database,
-and bounded model-assisted recovery on replay failure — top of the next list, because the
-escalation seam already exists. **Thin on purpose:** the console is one HTML file, the catalog is a
-directory, fault injection is a query parameter.
+co-browsing, queues/workers/containers, console authentication, a database, and bounded
+model-assisted recovery on replay failure — top of the next list, because the escalation seam
+already exists. **Thin on purpose:** the console is one HTML file, the catalog is a directory,
+fault injection is a query parameter. Of the stretch goals I took two — the capability catalog with
+its tool export, and cross-tenant reuse via `tenant_overrides`; the draft→approved gate and the
+stability sidecar fell out of the `approval` field and the `drift.summary` event.
 
-**What real runs exposed** — none findable from tests, all now fixed and regression-tested:
+**What real runs exposed, and tests could not.** Three provider defects: a model whose tool call
+loses its `thought_signature` is rejected on the next turn; a provider that refuses multipart
+content ended a run over a screenshot that was only a supplement; screenshots written to a
+double-rooted path were on disk but invisible in the directory a reviewer opens. And two recording
+defects: a model declared `transform: "none"` on a currency output — type-correct at record time,
+broken on *every* replay — and a required input no step referenced. Lint **L011** and **L012** now
+reject both, and every override is logged as `recorder.overruled`. The lesson is not that models
+behave badly; it is that **a recording pipeline must be able to overrule the model**, and where it
+must is only visible against a real one.
 
-1. **Gemini 3.x rejects a follow-up turn whose tool calls dropped their `thought_signature`.** A
-   client that rebuilds the assistant message from name and arguments cannot get past turn two.
-2. **A model declared `transform: "none"` on a `currency` output.** It type-checked at record time
-   and failed on *every* replay: the screen holds `$310.42`, the contract promises a float, nothing
-   bridged them. Recorder overrules it; lint **L011** rejects it.
-3. **A model declared a required input no step referenced** — a field every caller must supply that
-   changes nothing. Recorder drops it; lint **L012**.
-4. **A provider rejected multipart content**, ending a run over a screenshot that was only a
-   supplement. The client now retries text-only.
-5. **Screenshots were written to a double-rooted path** — on disk, but invisible in the run
-   directory a reviewer opens.
+**Next:** promotion gated on measured replay stability instead of a human flipping a field; a second
+real surface to prove the Protocol rather than assert it; semantic policy ("may read balances, may
+not move money"); bounded single-step model recovery; cross-tenant drift aggregation.
 
-The lesson is not that the models behaved badly. It is that **a recording pipeline must be able to
-overrule the model**, and the places where it must are only visible against a real one. Every
-override is logged as `recorder.overruled`.
-
-**Next:** promotion gated on replay stability rather than a human flipping a field; a second real
-surface to prove the Protocol rather than assert it; semantic policy; bounded single-step model
-recovery, policy-checked and recorded; cross-tenant drift aggregation, since the winning-rung signal
-already exists per run and wants to be a fleet view.
-
-**Known weaknesses:** the discovery run is the one path tests cannot cover, and the one most exposed
-to provider behaviour. Perception is tuned to table-and-frameset legacy markup and a modern div
-skin; a canvas-rendered application would need the screenshot channel to do real work. And
-`error_rate` flakiness is simulated, not observed — real transient failure has a shape I have not
-measured.
+**Known weaknesses:** discovery is the one path tests cannot cover and the one most exposed to
+provider behaviour; perception is tuned to legacy table/frameset markup and a modern div skin, so a
+canvas-rendered app would need the screenshot channel to do real work; and `error_rate` flakiness is
+simulated — real transient failure has a shape I have not measured.

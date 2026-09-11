@@ -159,13 +159,13 @@ async def _drive(run: ReplayRun | DiscoveryRun, args: argparse.Namespace) -> Any
     try:
         if args.console and run.session is not None:  # a run refused before a browser opened has nothing to take over
             engine = run.engine if isinstance(run, ReplayRun) else run.policy
-            return await _with_console(run, engine, args.console_port, run.execute)
+            return await with_console(run, engine, args.console_port, run.execute)
         return await run.execute()
     finally:
         await run.close()
 
 
-async def _with_console(run: ReplayRun | DiscoveryRun, engine: Any, port: int, execute: Callable[[], Awaitable[Any]]) -> Any:
+async def with_console(run: ReplayRun | DiscoveryRun, engine: Any, port: int, execute: Callable[[], Awaitable[Any]]) -> Any:
     store = InterventionStore(run.evidence, run.logger)
     server, task = await serve(build_app(run, store, engine), port=port)
     # uvicorn took SIGINT when it started serving. Take it back: a Ctrl-C must cancel the RUN,
