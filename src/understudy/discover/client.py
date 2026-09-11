@@ -89,6 +89,10 @@ class OpenAICompatClient:
         self.max_retries = max_retries
         # Some providers reject the parameter outright; remembered after the first rejection.
         self._serial_tool_calls = True
+        # Others are text-only and reject a multipart content array (our screenshot part).
+        # Perception is the accessibility-derived observation; the screenshot is a supplement,
+        # so dropping it degrades the run rather than ending it.
+        self._multipart_content = True
 
     @classmethod
     def from_env(cls) -> OpenAICompatClient:
@@ -108,6 +112,8 @@ class OpenAICompatClient:
         )
         if self._serial_tool_calls:
             kwargs["parallel_tool_calls"] = False
+        if not self._multipart_content:
+            kwargs["messages"] = _flatten_content(kwargs["messages"])
         attempt = 0
         while True:
             try:
@@ -117,6 +123,11 @@ class OpenAICompatClient:
                 if "parallel_tool_calls" in kwargs and "parallel_tool_calls" in str(e):
                     del kwargs["parallel_tool_calls"]
                     self._serial_tool_calls = False
+                    continue
+                if self._multipart_content and "content must be a string" in str(e):
+                    print("llm: provider is text-only; dropping screenshot parts", file=sys.stderr)
+                    self._multipart_content = False
+                    kwargs["messages"] = _flatten_content(kwargs["messages"])
                     continue
                 raise
             except (openai.APIStatusError, openai.APIConnectionError) as e:
@@ -191,3 +202,15 @@ class ScriptedModelClient:
         if isinstance(turn, str):
             return ModelTurn(text=turn, tool_calls=[])
         return ModelTurn(text=None, tool_calls=list(turn))
+
+
+def _flatten_content(messages: list[dict]) -> list[dict]:
+    """Collapse multipart content to plain text for a provider that only accepts strings."""
+    out = []
+    for m in messages:
+        c = m.get("content")
+        if isinstance(c, list):
+            text = "\n".join(p.get("text", "") for p in c if p.get("type") == "text")
+            m = {**m, "content": text}
+        out.append(m)
+    return out

@@ -275,7 +275,17 @@ def compile(
     else:
         success = TextPresent(kind="text_present", text=param(finish.success_text, "success_checkpoint"), wait_ms=5000)
 
-    secrets_required = sorted({name for kind, name in TEMPLATE_REF.findall(json.dumps([s.model_dump(mode="json") for s in steps])) if kind == "secrets"})
+    compiled_json = json.dumps([s.model_dump(mode="json") for s in steps])
+    secrets_required = sorted({name for kind, name in TEMPLATE_REF.findall(compiled_json) if kind == "secrets"})
+
+    # A model that declares an input no step ever uses puts a required field in the agent-facing
+    # contract that does nothing: every caller must supply it, and supplying it changes nothing.
+    # (Observed: a run declared `operator_id` alongside credentials it correctly typed as secrets.)
+    referenced = {n for kind, n in TEMPLATE_REF.findall(compiled_json + json.dumps(success.model_dump(mode="json"))) if kind == "inputs"}
+    for spec in [p for p in inputs if p.name not in referenced]:
+        logger.emit("recorder.overruled", what=f"inputs.{spec.name}",
+                    why="declared but never referenced by any step; dropped from the contract")
+    inputs = [p for p in inputs if p.name in referenced]
     parts = urlsplit(options.entry_url)
     tenant = re.match(r"^/t/([^/]+)/", parts.path)
     name = options.name or derive_name(options.goal)

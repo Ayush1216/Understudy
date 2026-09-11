@@ -1,0 +1,542 @@
+{
+  "schema_version": "1",
+  "id": "cap_alpha_share_open",
+  "name": "alpha.share.open",
+  "version": "1.0.0",
+  "title": "Open a new share sub-account for a member",
+  "description": "Signs on, opens the new-share form for the member, selects the share type, enters the initial deposit, reviews, and confirms. Confirm creates the sub-account and cannot be undone: it is classified irreversible and parks the run on a human approval.",
+  "approval": "approved",
+  "target": {
+    "surface": "legacy_web",
+    "app": "harborline-cu",
+    "app_version": "3.7.2",
+    "tenant": "alpha",
+    "entry_url": "http://localhost:4599/t/alpha/",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    }
+  },
+  "inputs": [
+    {
+      "name": "member_number",
+      "type": "string",
+      "description": "Six-digit member number",
+      "required": true,
+      "default": null,
+      "enum_values": null,
+      "pattern": "^\\d{6}$",
+      "sensitivity": "pii",
+      "example": "100234"
+    },
+    {
+      "name": "deposit",
+      "type": "number",
+      "description": "Initial deposit in dollars; the application requires at least 25.00",
+      "required": true,
+      "default": null,
+      "enum_values": null,
+      "pattern": null,
+      "sensitivity": "public",
+      "example": 50
+    }
+  ],
+  "outputs": [
+    {
+      "name": "reference_number",
+      "type": "string",
+      "description": "Reference number of the created sub-account",
+      "required": true,
+      "sensitivity": "public",
+      "source": {
+        "kind": "text_of",
+        "target": {
+          "role": "cell",
+          "label": "Reference Number",
+          "rationale": "value cell adjacent to the 'Reference Number' label cell",
+          "frame_path": [],
+          "intent": "read",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "cell",
+              "label": "Reference Number"
+            }
+          ]
+        },
+        "attribute": null,
+        "url_pattern": null,
+        "transform": "trim"
+      }
+    }
+  ],
+  "secrets_required": [
+    "APP_OPERATOR",
+    "APP_PASSWORD"
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "description": "Enter the operator ID",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Operator ID",
+          "rationale": "adjacent-cell label 'Operator ID'; no <label for> on this markup; name=u as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Operator ID"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "u",
+              "role": "textbox"
+            }
+          ]
+        },
+        "value": "{{secrets.APP_OPERATOR}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s2",
+      "description": "Enter the «redacted:secret»",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Password",
+          "rationale": "adjacent-cell label 'Password'; no <label for> on this markup; name=p as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Password"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "p",
+              "role": "textbox"
+            }
+          ]
+        },
+        "value": "{{secrets.APP_PASSWORD}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s3",
+      "description": "Sign on",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "button",
+          "label": "Sign On",
+          "rationale": "submit button; accessible name comes from value=",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "value",
+              "value": "Sign On",
+              "role": "button"
+            }
+          ]
+        }
+      },
+      "risk": "safe",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "MAIN MENU",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s4",
+      "description": "Open the new-share form for the member",
+      "action": {
+        "type": "navigate",
+        "url": "http://localhost:4599/t/alpha/members/{{inputs.member_number}}/open-share"
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "OPEN NEW SHARE",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s5",
+      "description": "Choose the share type",
+      "action": {
+        "type": "select",
+        "target": {
+          "role": "combobox",
+          "label": "Share Type",
+          "rationale": "adjacent-cell label 'Share Type'; no <label for> on this markup; name=share_type as fallback",
+          "frame_path": [],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "combobox",
+              "label": "Share Type"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "share_type",
+              "role": "combobox"
+            }
+          ]
+        },
+        "value": "Regular Shares"
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s6",
+      "description": "Enter the initial deposit",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Initial Deposit",
+          "rationale": "adjacent-cell label 'Initial Deposit'; no <label for> on this markup; name=f1 as fallback",
+          "frame_path": [],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Initial Deposit"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "f1",
+              "role": "textbox"
+            }
+          ]
+        },
+        "value": "{{inputs.deposit}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s7",
+      "description": "Review the new share",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "button",
+          "label": "Review",
+          "rationale": "submit button; accessible name comes from value=",
+          "frame_path": [],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "button",
+              "name": "Review",
+              "exact": true
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "value",
+              "value": "Review",
+              "role": "button"
+            }
+          ]
+        }
+      },
+      "risk": "sensitive",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "REVIEW NEW SHARE",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s8",
+      "description": "Confirm: creates the sub-account (irreversible)",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "button",
+          "label": "Confirm",
+          "rationale": "submit button; accessible name comes from value=",
+          "frame_path": [],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "button",
+              "name": "Confirm",
+              "exact": true
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "value",
+              "value": "Confirm",
+              "role": "button"
+            }
+          ]
+        }
+      },
+      "risk": "irreversible",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "SUB-ACCOUNT CREATED",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "escalate"
+    },
+    {
+      "id": "s9",
+      "description": "Read the reference number",
+      "action": {
+        "type": "extract",
+        "outputs": [
+          "reference_number"
+        ]
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    }
+  ],
+  "outcomes": [
+    {
+      "code": "DEPOSIT_TOO_SMALL",
+      "description": "The application refused the initial deposit as below its minimum",
+      "detect": {
+        "wait_ms": 0,
+        "description": "",
+        "kind": "text_present",
+        "text": "Initial deposit must be at least",
+        "match": "contains",
+        "frame_path": null
+      },
+      "outputs": []
+    },
+    {
+      "code": "PERMISSION_DENIED",
+      "description": "The signed-on operator lacks authority for this member; a supervisor override is required",
+      "detect": {
+        "wait_ms": 0,
+        "description": "",
+        "kind": "text_present",
+        "text": "SUPERVISOR OVERRIDE REQUIRED",
+        "match": "contains",
+        "frame_path": null
+      },
+      "outputs": []
+    }
+  ],
+  "recoveries": [],
+  "success_checkpoint": {
+    "wait_ms": 5000,
+    "description": "",
+    "kind": "text_present",
+    "text": "SUB-ACCOUNT CREATED",
+    "match": "contains",
+    "frame_path": null
+  },
+  "policy_declaration": {
+    "origins": [
+      "http://localhost:4599"
+    ],
+    "path_patterns": [
+      "/t/alpha/**"
+    ],
+    "action_types": [
+      "navigate",
+      "click",
+      "type",
+      "select",
+      "press",
+      "wait",
+      "assert",
+      "extract"
+    ],
+    "max_risk": "irreversible",
+    "require_approval_for": [
+      "irreversible"
+    ]
+  },
+  "provenance": {
+    "recorded_at": "2026-09-11T01:19:33.264592Z",
+    "goal": "open a new Regular Shares sub-account for member 100234 with a 50 dollar initial deposit",
+    "model": "hand-written",
+    "discovery_run_id": "curated",
+    "surface_signature": {},
+    "llm_step_count": 0,
+    "curated": true
+  },
+  "tenant_overrides": {}
+}

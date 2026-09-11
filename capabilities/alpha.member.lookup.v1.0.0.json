@@ -4,7 +4,7 @@
   "name": "alpha.member.lookup",
   "version": "1.0.0",
   "title": "Sign on to the member services console, look up member 100234, and read their name and their Regular Shares balance",
-  "description": "Sign on to member services console, search for a member by member number, and read their name and Regular Shares balance.",
+  "description": "Signs on, looks up the supplied member number, and reads the member's name and Regular Shares balance.",
   "approval": "draft",
   "target": {
     "surface": "legacy_web",
@@ -20,8 +20,8 @@
   "inputs": [
     {
       "name": "member_number",
-      "type": "string",
-      "description": "Member number to look up in the member services console",
+      "type": "number",
+      "description": "Member number to look up",
       "required": true,
       "default": null,
       "enum_values": null,
@@ -34,7 +34,7 @@
     {
       "name": "member_name",
       "type": "string",
-      "description": "Member full name",
+      "description": "Member name from member record",
       "required": true,
       "sensitivity": "pii",
       "source": {
@@ -67,7 +67,7 @@
     {
       "name": "regular_shares_balance",
       "type": "currency",
-      "description": "Regular Shares balance",
+      "description": "Regular Shares balance from member record",
       "required": true,
       "sensitivity": "public",
       "source": {
@@ -107,7 +107,7 @@
   "steps": [
     {
       "id": "s1",
-      "description": "Type the operator credential placeholder into the Operator ID field.",
+      "description": "Enter operator ID to sign on",
       "action": {
         "type": "type",
         "target": {
@@ -242,7 +242,7 @@
     },
     {
       "id": "s2",
-      "description": "Type the password credential placeholder into the Password field.",
+      "description": "Enter operator password",
       "action": {
         "type": "type",
         "target": {
@@ -377,7 +377,7 @@
     },
     {
       "id": "s3",
-      "description": "Click Sign On to log into the application.",
+      "description": "Click Sign On to log into console",
       "action": {
         "type": "click",
         "target": {
@@ -467,7 +467,7 @@
     },
     {
       "id": "s4",
-      "description": "Navigate to Member Search page.",
+      "description": "Navigate to Member Search screen",
       "action": {
         "type": "click",
         "target": {
@@ -527,7 +527,7 @@
     },
     {
       "id": "s5",
-      "description": "Enter member number {{inputs.member_number}} into the search box.",
+      "description": "Enter member number to look up",
       "action": {
         "type": "type",
         "target": {
@@ -662,7 +662,7 @@
     },
     {
       "id": "s6",
-      "description": "Click Retrieve to search for member {{inputs.member_number}}.",
+      "description": "Retrieve member details",
       "action": {
         "type": "click",
         "target": {
@@ -739,7 +739,7 @@
         "wait_ms": 8000,
         "description": "",
         "kind": "text_present",
-        "text": "SHARES / BALANCES",
+        "text": "MEMBER RECORD",
         "match": "contains",
         "frame_path": null
       },
@@ -752,7 +752,7 @@
     },
     {
       "id": "s7",
-      "description": "Extract member name from the member record page.",
+      "description": "Read member's name",
       "action": {
         "type": "extract",
         "outputs": [
@@ -805,15 +805,15 @@
     ]
   },
   "provenance": {
-    "recorded_at": "2026-09-11T02:25:08.905595Z",
+    "recorded_at": "2026-09-11T03:47:19.335388Z",
     "goal": "Sign on to the member services console, look up member 100234, and read their name and their Regular Shares balance",
-    "model": "gemini-3.6-flash",
-    "discovery_run_id": "discover-20260911-022030-d6bd92",
+    "model": "openai/gpt-oss-120b",
+    "discovery_run_id": "discover-20260911-033837-f203df",
     "surface_signature": {
       "browser": "chromium",
       "surface": "legacy_web"
     },
-    "llm_step_count": 13,
+    "llm_step_count": 17,
     "curated": false
   },
   "tenant_overrides": {}

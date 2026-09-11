@@ -1,0 +1,9 @@
+{
+  "intervention_id": "iv_0d5f845e21",
+  "human_actions": [],
+  "resolution": {
+    "at": "2026-09-11T03:53:32.359118Z",
+    "decision": "approve",
+    "note": "supervisor approved the new share"
+  }
+}

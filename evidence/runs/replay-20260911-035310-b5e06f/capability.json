@@ -1,0 +1,820 @@
+{
+  "schema_version": "1",
+  "id": "cap_alpha_member_lookup",
+  "name": "alpha.member.lookup",
+  "version": "1.0.0",
+  "title": "Sign on to the member services console, look up member 100234, and read their name and their Regular Shares balance",
+  "description": "Signs on, looks up the supplied member number, and reads the member's name and Regular Shares balance.",
+  "approval": "draft",
+  "target": {
+    "surface": "legacy_web",
+    "app": "harborline-cu",
+    "app_version": null,
+    "tenant": "alpha",
+    "entry_url": "http://localhost:4599/t/alpha/",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    }
+  },
+  "inputs": [
+    {
+      "name": "member_number",
+      "type": "number",
+      "description": "Member number to look up",
+      "required": true,
+      "default": null,
+      "enum_values": null,
+      "pattern": null,
+      "sensitivity": "public",
+      "example": "100234"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "member_name",
+      "type": "string",
+      "description": "Member name from member record",
+      "required": true,
+      "sensitivity": "pii",
+      "source": {
+        "kind": "text_of",
+        "target": {
+          "role": "cell",
+          "label": "Name",
+          "rationale": "adjacent-cell label \"Name\"; no <label for> on this markup",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "read",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "cell",
+              "label": "Name"
+            }
+          ]
+        },
+        "attribute": null,
+        "url_pattern": null,
+        "transform": "trim"
+      }
+    },
+    {
+      "name": "regular_shares_balance",
+      "type": "currency",
+      "description": "Regular Shares balance from member record",
+      "required": true,
+      "sensitivity": "public",
+      "source": {
+        "kind": "text_of",
+        "target": {
+          "role": "cell",
+          "label": "",
+          "rationale": "row \"Regular Shares\" (Type) x column \"Balance\"",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "read",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.85,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "table_cell",
+              "row_anchor": "Regular Shares",
+              "column": "Balance",
+              "anchor_column": "Type",
+              "inner_role": null
+            }
+          ]
+        },
+        "attribute": null,
+        "url_pattern": null,
+        "transform": "currency_to_number"
+      }
+    }
+  ],
+  "secrets_required": [
+    "APP_OPERATOR",
+    "APP_PASSWORD"
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "description": "Enter operator ID to sign on",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Operator ID",
+          "rationale": "adjacent-cell label \"Operator ID\"; no <label for> on this markup; name=u as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Operator ID"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "u",
+              "role": "textbox"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "textbox",
+              "index": 0
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 155.296875,
+              "y": 80.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        },
+        "value": "{{secrets.APP_OPERATOR}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 2000,
+        "description": "",
+        "kind": "control_present",
+        "target": {
+          "role": "textbox",
+          "label": "Operator ID",
+          "rationale": "adjacent-cell label \"Operator ID\"; no <label for> on this markup; name=u as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Operator ID"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "u",
+              "role": "textbox"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "textbox",
+              "index": 0
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 155.296875,
+              "y": 80.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        }
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s2",
+      "description": "Enter operator «redacted:secret»",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Password",
+          "rationale": "adjacent-cell label \"Password\"; no <label for> on this markup; name=p as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Password"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "p",
+              "role": "textbox"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "textbox",
+              "index": 1
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(2) > td:nth-of-type(2) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 155.296875,
+              "y": 107.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        },
+        "value": "{{secrets.APP_PASSWORD}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 2000,
+        "description": "",
+        "kind": "control_present",
+        "target": {
+          "role": "textbox",
+          "label": "Password",
+          "rationale": "adjacent-cell label \"Password\"; no <label for> on this markup; name=p as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Password"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "p",
+              "role": "textbox"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "textbox",
+              "index": 1
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(2) > td:nth-of-type(2) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 155.296875,
+              "y": 107.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        }
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s3",
+      "description": "Click Sign On to log into console",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "button",
+          "label": "Sign On",
+          "rationale": "button value \"Sign On\"; value=Sign On as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "confidence": 0.8,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "text",
+              "text": "Sign On",
+              "role": "button",
+              "exact": true
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "value",
+              "value": "Sign On",
+              "role": "button"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "button",
+              "index": 0
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(3) > td:nth-of-type(2) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 138.8828125,
+              "y": 134.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        }
+      },
+      "risk": "safe",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "MAIN MENU",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s4",
+      "description": "Navigate to Member Search screen",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "link",
+          "label": "Member Search",
+          "rationale": "accessible name \"Member Search\"",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Search",
+              "exact": true
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "link",
+              "index": 0
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > a:nth-of-type(1)"
+            }
+          ]
+        }
+      },
+      "risk": "safe",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "MEMBER INQUIRY / SELECTION",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s5",
+      "description": "Enter member number to look up",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Member No.",
+          "rationale": "adjacent-cell label \"Member No.\"; no <label for> on this markup; name=q as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Member No."
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "q",
+              "role": "textbox"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "textbox",
+              "index": 0
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 148.703125,
+              "y": 80.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        },
+        "value": "{{inputs.member_number}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 2000,
+        "description": "",
+        "kind": "control_present",
+        "target": {
+          "role": "textbox",
+          "label": "Member No.",
+          "rationale": "adjacent-cell label \"Member No.\"; no <label for> on this markup; name=q as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Member No."
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "q",
+              "role": "textbox"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "textbox",
+              "index": 0
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 148.703125,
+              "y": 80.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        }
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s6",
+      "description": "Retrieve member details",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "button",
+          "label": "Retrieve",
+          "rationale": "button value \"Retrieve\"; value=Retrieve as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "button",
+              "name": "Retrieve",
+              "exact": true
+            },
+            {
+              "confidence": 0.8,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "text",
+              "text": "Retrieve",
+              "role": "button",
+              "exact": true
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "value",
+              "value": "Retrieve",
+              "role": "button"
+            },
+            {
+              "confidence": 0.55,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "nth_of_role",
+              "role": "button",
+              "index": 0
+            },
+            {
+              "confidence": 0.4,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "css",
+              "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(3) > input:nth-of-type(1)"
+            },
+            {
+              "confidence": 0.2,
+              "origin": "derived",
+              "matches_at_capture": 1,
+              "kind": "coordinate",
+              "x": 229.0234375,
+              "y": 80.5,
+              "viewport": {
+                "width": 1280,
+                "height": 800
+              }
+            }
+          ]
+        }
+      },
+      "risk": "safe",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "MEMBER RECORD",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s7",
+      "description": "Read member's name",
+      "action": {
+        "type": "extract",
+        "outputs": [
+          "member_name",
+          "regular_shares_balance"
+        ]
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    }
+  ],
+  "outcomes": [],
+  "recoveries": [],
+  "success_checkpoint": {
+    "wait_ms": 5000,
+    "description": "",
+    "kind": "text_present",
+    "text": "MEMBER RECORD",
+    "match": "contains",
+    "frame_path": null
+  },
+  "policy_declaration": {
+    "origins": [
+      "http://localhost:4599"
+    ],
+    "path_patterns": [
+      "/t/alpha/**"
+    ],
+    "action_types": [
+      "navigate",
+      "click",
+      "type",
+      "select",
+      "press",
+      "wait",
+      "assert",
+      "extract"
+    ],
+    "max_risk": "safe",
+    "require_approval_for": [
+      "irreversible"
+    ]
+  },
+  "provenance": {
+    "recorded_at": "2026-09-11T03:47:19.335388Z",
+    "goal": "Sign on to the member services console, look up member 100234, and read their name and their Regular Shares balance",
+    "model": "openai/gpt-oss-120b",
+    "discovery_run_id": "discover-20260911-033837-f203df",
+    "surface_signature": {
+      "browser": "chromium",
+      "surface": "legacy_web"
+    },
+    "llm_step_count": 17,
+    "curated": false
+  },
+  "tenant_overrides": {}
+}

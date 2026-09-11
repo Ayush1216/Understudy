@@ -313,8 +313,8 @@ PANEL = f"""<!DOCTYPE html>
 <style>body{{font:14px system-ui;margin:24px;max-width:680px}} button{{margin:2px}} pre{{background:#eee;padding:8px}}</style></head>
 <body>
 <h1>Target app control panel</h1>
-<p>Tenants: <a href="/t/alpha/">alpha — HARBORLINE CU Member Services Console v4.2.1</a> ·
-<a href="/t/beta/">beta — CEDARVALE FCU Account Servicing v5.0</a></p>
+<p>Tenants: <a href="/t/alpha/">alpha — HARBORLINE CU Member Services Console v3.7.2</a> ·
+<a href="/t/beta/">beta — CEDARVALE FCU Account Servicing v6.1</a></p>
 <p>Arm a fault for <select id="sid"><option value="">this browser's session</option></select>
 ttl <input id="ttl" value="1" size="3"> (-1 = sticky) rate <input id="rate" value="0.3" size="3"> (error_rate only)</p>
 <p id="modes"></p>

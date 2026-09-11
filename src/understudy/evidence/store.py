@@ -95,8 +95,13 @@ class EvidenceDir:
     def _inside(self, path: str | Path) -> Path:
         # `run_dir / absolute` returns the absolute path, so the containment check must come
         # after the join. Both sides resolved: tmp dirs on darwin sit behind a symlink.
-        p = self.run_dir / path
-        if not p.resolve().is_relative_to(self.run_dir.resolve()):
+        p = Path(path)
+        already_rooted = p.is_absolute() or p.parts[: len(self.run_dir.parts)] == self.run_dir.parts
+        # screenshot_path() and dom_path() hand back run-dir-rooted paths. Joining one again
+        # nests a second evidence/runs/<id> inside the first, which is where the screenshots
+        # silently went: present on disk, invisible to anyone reading the run directory.
+        p = p if already_rooted else self.run_dir / p
+        if not (self.run_dir / p).resolve().is_relative_to(self.run_dir.resolve()):
             raise ValueError(f"{str(path)!r} escapes the evidence directory")
         p.parent.mkdir(parents=True, exist_ok=True)
         return p

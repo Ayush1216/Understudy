@@ -105,3 +105,9 @@ def test_numeric_output_needs_a_numeric_transform():
     assert "L011" in codes(Capability.model_validate(d))
     d["outputs"][1]["source"]["transform"] = "currency_to_number"
     assert "L011" not in codes(Capability.model_validate(d))
+
+
+def test_an_input_nothing_references_is_dead_weight_in_the_contract():
+    d = member_balance_dict()
+    d["inputs"].append({"name": "operator_id", "type": "string", "description": "unused", "example": "teller1"})
+    assert "L012" in codes(Capability.model_validate(d))

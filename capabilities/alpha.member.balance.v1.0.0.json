@@ -9,7 +9,7 @@
   "target": {
     "surface": "legacy_web",
     "app": "harborline-cu",
-    "app_version": "4.2.1",
+    "app_version": "3.7.2",
     "tenant": "alpha",
     "entry_url": "http://localhost:4599/t/alpha/",
     "viewport": {
@@ -750,7 +750,7 @@
   },
   "tenant_overrides": {
     "beta": {
-      "note": "Cedarvale FCU skin, product v5.0: single page (no frameset), div layout, renamed labels.",
+      "note": "Cedarvale FCU skin, product v6.1: single page (no frameset), div layout, renamed labels.",
       "entry_url": "http://localhost:4599/t/beta/",
       "frame_map": {
         "nav": "",

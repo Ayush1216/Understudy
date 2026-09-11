@@ -1,0 +1,16 @@
+{
+  "run_id": "replay-20260911-035314-1af3cc",
+  "capability": {
+    "id": "cap_alpha_member_balance",
+    "name": "alpha.member.balance",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 393,
+  "evidence_dir": "evidence/runs/replay-20260911-035314-1af3cc",
+  "status": "business_outcome",
+  "code": "MEMBER_NOT_FOUND",
+  "message": "No member record exists for that number",
+  "outputs": {},
+  "at_step_id": "s6"
+}

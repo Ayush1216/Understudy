@@ -202,3 +202,13 @@ def test_secrets_policy_declaration_and_name_are_derived_from_the_trace(compiled
     assert [s.id for s in cap.steps] == ["s1", "s2"] and cap.recoveries == []
     assert cap.target.tenant == "alpha" and cap.target.entry_url == ENTRY
     assert lint_capability(cap) == []
+
+
+def test_a_declared_input_no_step_uses_is_dropped_from_the_contract(compiled):
+    declared = [
+        ParamSpec(name="member_number", type="string", description="Member number", example="100234"),
+        ParamSpec(name="operator_id", type="string", description="Operator", example="teller1"),
+    ]
+    cap, overruled = compiled([typed(1, "100234"), clicked(2)], declared_inputs=declared)
+    assert [p.name for p in cap.inputs] == ["member_number"]
+    assert any(e["what"] == "inputs.operator_id" for e in overruled)

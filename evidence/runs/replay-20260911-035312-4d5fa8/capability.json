@@ -1,0 +1,814 @@
+{
+  "schema_version": "1",
+  "id": "cap_alpha_member_balance",
+  "name": "alpha.member.balance",
+  "version": "1.0.0",
+  "title": "Look up a member and read their primary share balance",
+  "description": "Signs on as the operator, searches a member by number, opens the member record and reads the Regular Shares balance.",
+  "approval": "approved",
+  "target": {
+    "surface": "legacy_web",
+    "app": "harborline-cu",
+    "app_version": "3.7.2",
+    "tenant": "alpha",
+    "entry_url": "http://localhost:4599/t/alpha/",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    }
+  },
+  "inputs": [
+    {
+      "name": "member_number",
+      "type": "string",
+      "description": "Six-digit member number",
+      "required": true,
+      "default": null,
+      "enum_values": null,
+      "pattern": "^\\d{6}$",
+      "sensitivity": "pii",
+      "example": "100234"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "member_name",
+      "type": "string",
+      "description": "Member name as shown on the record",
+      "required": true,
+      "sensitivity": "public",
+      "source": {
+        "kind": "text_of",
+        "target": {
+          "role": "cell",
+          "label": "Name",
+          "rationale": "value cell adjacent to the 'Name' label cell",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "read",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "cell",
+              "label": "Name"
+            }
+          ]
+        },
+        "attribute": null,
+        "url_pattern": null,
+        "transform": "trim"
+      }
+    },
+    {
+      "name": "primary_share_balance",
+      "type": "currency",
+      "description": "Balance of the Regular Shares row",
+      "required": true,
+      "sensitivity": "public",
+      "source": {
+        "kind": "text_of",
+        "target": {
+          "role": "cell",
+          "label": "Balance of Regular Shares",
+          "rationale": "header-matched column, row anchored on share Type; never by row position",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "read",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.85,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "table_cell",
+              "row_anchor": "Regular Shares",
+              "column": "Balance",
+              "anchor_column": "Type",
+              "inner_role": null
+            }
+          ]
+        },
+        "attribute": null,
+        "url_pattern": null,
+        "transform": "currency_to_number"
+      }
+    }
+  ],
+  "secrets_required": [
+    "APP_OPERATOR",
+    "APP_PASSWORD"
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "description": "Enter the operator ID",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Operator ID",
+          "rationale": "adjacent-cell label 'Operator ID'; no <label for> on this markup; name=u as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Operator ID"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "u",
+              "role": "textbox"
+            }
+          ]
+        },
+        "value": "{{secrets.APP_OPERATOR}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s2",
+      "description": "Enter the «redacted:secret»",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Password",
+          "rationale": "adjacent-cell label 'Password'; no <label for> on this markup; name=p as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Password"
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "p",
+              "role": "textbox"
+            }
+          ]
+        },
+        "value": "{{secrets.APP_PASSWORD}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s3",
+      "description": "Sign on",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "button",
+          "label": "Sign On",
+          "rationale": "submit button; accessible name comes from value=",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "button",
+              "name": "Sign On",
+              "exact": true
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "value",
+              "value": "Sign On",
+              "role": "button"
+            }
+          ]
+        }
+      },
+      "risk": "safe",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "MAIN MENU",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s4",
+      "description": "Open member search",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "link",
+          "label": "Member Search",
+          "rationale": "navigation link identified by its visible text",
+          "frame_path": [
+            "nav"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "link",
+              "name": "Member Search",
+              "exact": true
+            },
+            {
+              "confidence": 0.8,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "text",
+              "text": "Member Search",
+              "role": "link",
+              "exact": true
+            }
+          ]
+        }
+      },
+      "risk": "safe",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "control_present",
+        "target": {
+          "role": "textbox",
+          "label": "Member No.",
+          "rationale": "adjacent-cell label 'Member No.'; no <label for> on this markup; name=q as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Member No."
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "q",
+              "role": "textbox"
+            }
+          ]
+        }
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s5",
+      "description": "Enter the member number",
+      "action": {
+        "type": "type",
+        "target": {
+          "role": "textbox",
+          "label": "Member No.",
+          "rationale": "adjacent-cell label 'Member No.'; no <label for> on this markup; name=q as fallback",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.9,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "inferred_label",
+              "role": "textbox",
+              "label": "Member No."
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "name",
+              "value": "q",
+              "role": "textbox"
+            }
+          ]
+        },
+        "value": "{{inputs.member_number}}",
+        "clear_first": true
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s6",
+      "description": "Retrieve the member record",
+      "action": {
+        "type": "click",
+        "target": {
+          "role": "button",
+          "label": "Retrieve",
+          "rationale": "submit button; accessible name comes from value=",
+          "frame_path": [
+            "content"
+          ],
+          "intent": "act",
+          "scope": null,
+          "strategies": [
+            {
+              "confidence": 0.95,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "role_name",
+              "role": "button",
+              "name": "Retrieve",
+              "exact": true
+            },
+            {
+              "confidence": 0.7,
+              "origin": "captured",
+              "matches_at_capture": 1,
+              "kind": "attribute",
+              "attr": "value",
+              "value": "Retrieve",
+              "role": "button"
+            }
+          ]
+        }
+      },
+      "risk": "safe",
+      "expects_navigation": true,
+      "preconditions": [],
+      "postcondition": {
+        "wait_ms": 8000,
+        "description": "",
+        "kind": "text_present",
+        "text": "MEMBER RECORD",
+        "match": "contains",
+        "frame_path": null
+      },
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 1,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    },
+    {
+      "id": "s7",
+      "description": "Read the name and primary share balance",
+      "action": {
+        "type": "extract",
+        "outputs": [
+          "member_name",
+          "primary_share_balance"
+        ]
+      },
+      "risk": "safe",
+      "expects_navigation": false,
+      "preconditions": [],
+      "postcondition": null,
+      "timeout_ms": 15000,
+      "retries": {
+        "max": 0,
+        "backoff_ms": 500
+      },
+      "on_failure": "fail"
+    }
+  ],
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member record exists for that number",
+      "detect": {
+        "wait_ms": 0,
+        "description": "",
+        "kind": "text_present",
+        "text": "RECORD NOT FOUND",
+        "match": "contains",
+        "frame_path": null
+      },
+      "outputs": []
+    }
+  ],
+  "recoveries": [
+    {
+      "id": "dismiss_maintenance",
+      "description": "Dismiss the maintenance interstitial and continue",
+      "when": {
+        "wait_ms": 0,
+        "description": "",
+        "kind": "text_present",
+        "text": "SYSTEM MAINTENANCE NOTICE",
+        "match": "contains",
+        "frame_path": null
+      },
+      "do": [
+        {
+          "type": "click",
+          "target": {
+            "role": "button",
+            "label": "Continue",
+            "rationale": "submit button; accessible name comes from value=",
+            "frame_path": [
+              "content"
+            ],
+            "intent": "act",
+            "scope": null,
+            "strategies": [
+              {
+                "confidence": 0.95,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "role_name",
+                "role": "button",
+                "name": "Continue",
+                "exact": true
+              },
+              {
+                "confidence": 0.7,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "attribute",
+                "attr": "value",
+                "value": "Continue",
+                "role": "button"
+              }
+            ]
+          }
+        }
+      ],
+      "max_attempts": 3,
+      "then_retry_step": false
+    },
+    {
+      "id": "reauthenticate",
+      "description": "Sign on again and return to the member search with the same member number",
+      "when": {
+        "wait_ms": 0,
+        "description": "",
+        "kind": "text_present",
+        "text": "Your session has expired",
+        "match": "contains",
+        "frame_path": null
+      },
+      "do": [
+        {
+          "type": "type",
+          "target": {
+            "role": "textbox",
+            "label": "Operator ID",
+            "rationale": "adjacent-cell label 'Operator ID'; no <label for> on this markup; name=u as fallback",
+            "frame_path": [
+              "content"
+            ],
+            "intent": "act",
+            "scope": null,
+            "strategies": [
+              {
+                "confidence": 0.9,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "inferred_label",
+                "role": "textbox",
+                "label": "Operator ID"
+              },
+              {
+                "confidence": 0.7,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "attribute",
+                "attr": "name",
+                "value": "u",
+                "role": "textbox"
+              }
+            ]
+          },
+          "value": "{{secrets.APP_OPERATOR}}",
+          "clear_first": true
+        },
+        {
+          "type": "type",
+          "target": {
+            "role": "textbox",
+            "label": "Password",
+            "rationale": "adjacent-cell label 'Password'; no <label for> on this markup; name=p as fallback",
+            "frame_path": [
+              "content"
+            ],
+            "intent": "act",
+            "scope": null,
+            "strategies": [
+              {
+                "confidence": 0.9,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "inferred_label",
+                "role": "textbox",
+                "label": "Password"
+              },
+              {
+                "confidence": 0.7,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "attribute",
+                "attr": "name",
+                "value": "p",
+                "role": "textbox"
+              }
+            ]
+          },
+          "value": "{{secrets.APP_PASSWORD}}",
+          "clear_first": true
+        },
+        {
+          "type": "click",
+          "target": {
+            "role": "button",
+            "label": "Sign On",
+            "rationale": "submit button; accessible name comes from value=",
+            "frame_path": [
+              "content"
+            ],
+            "intent": "act",
+            "scope": null,
+            "strategies": [
+              {
+                "confidence": 0.95,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "role_name",
+                "role": "button",
+                "name": "Sign On",
+                "exact": true
+              },
+              {
+                "confidence": 0.7,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "attribute",
+                "attr": "value",
+                "value": "Sign On",
+                "role": "button"
+              }
+            ]
+          }
+        },
+        {
+          "type": "click",
+          "target": {
+            "role": "link",
+            "label": "Member Search",
+            "rationale": "navigation link identified by its visible text",
+            "frame_path": [
+              "nav"
+            ],
+            "intent": "act",
+            "scope": null,
+            "strategies": [
+              {
+                "confidence": 0.95,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "role_name",
+                "role": "link",
+                "name": "Member Search",
+                "exact": true
+              },
+              {
+                "confidence": 0.8,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "text",
+                "text": "Member Search",
+                "role": "link",
+                "exact": true
+              }
+            ]
+          }
+        },
+        {
+          "type": "type",
+          "target": {
+            "role": "textbox",
+            "label": "Member No.",
+            "rationale": "adjacent-cell label 'Member No.'; no <label for> on this markup; name=q as fallback",
+            "frame_path": [
+              "content"
+            ],
+            "intent": "act",
+            "scope": null,
+            "strategies": [
+              {
+                "confidence": 0.9,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "inferred_label",
+                "role": "textbox",
+                "label": "Member No."
+              },
+              {
+                "confidence": 0.7,
+                "origin": "captured",
+                "matches_at_capture": 1,
+                "kind": "attribute",
+                "attr": "name",
+                "value": "q",
+                "role": "textbox"
+              }
+            ]
+          },
+          "value": "{{inputs.member_number}}",
+          "clear_first": true
+        }
+      ],
+      "max_attempts": 1,
+      "then_retry_step": true
+    }
+  ],
+  "success_checkpoint": {
+    "wait_ms": 5000,
+    "description": "",
+    "kind": "text_present",
+    "text": "SHARES / BALANCES",
+    "match": "contains",
+    "frame_path": null
+  },
+  "policy_declaration": {
+    "origins": [
+      "http://localhost:4599"
+    ],
+    "path_patterns": [
+      "/t/*/**"
+    ],
+    "action_types": [
+      "navigate",
+      "click",
+      "type",
+      "select",
+      "press",
+      "wait",
+      "assert",
+      "extract"
+    ],
+    "max_risk": "safe",
+    "require_approval_for": [
+      "irreversible"
+    ]
+  },
+  "provenance": {
+    "recorded_at": "2026-09-10T00:00:00Z",
+    "goal": "look up member 100234 and read their savings balance",
+    "model": "hand-written",
+    "discovery_run_id": "fixture",
+    "surface_signature": {},
+    "llm_step_count": 0,
+    "curated": true
+  },
+  "tenant_overrides": {
+    "beta": {
+      "note": "Cedarvale FCU skin, product v6.1: single page (no frameset), div layout, renamed labels.",
+      "entry_url": "http://localhost:4599/t/beta/",
+      "frame_map": {
+        "nav": "",
+        "content": ""
+      },
+      "aliases": {
+        "labels": {
+          "Operator ID": [
+            "User ID"
+          ],
+          "Password": [
+            "Passcode"
+          ],
+          "Member No.": [
+            "Account Number"
+          ],
+          "Name": [
+            "Member Name"
+          ]
+        },
+        "texts": {
+          "Sign On": [
+            "Sign In"
+          ],
+          "Member Search": [
+            "Find Member"
+          ],
+          "Retrieve": [
+            "Search"
+          ],
+          "MAIN MENU": [
+            "HOME"
+          ],
+          "MEMBER RECORD": [
+            "MEMBER PROFILE"
+          ],
+          "SHARES / BALANCES": [
+            "ACCOUNTS / BALANCES"
+          ],
+          "RECORD NOT FOUND": [
+            "No matching member"
+          ],
+          "SYSTEM MAINTENANCE NOTICE": [
+            "Scheduled maintenance"
+          ],
+          "Continue": [
+            "Proceed"
+          ]
+        },
+        "columns": {
+          "Share ID": [
+            "Account ID"
+          ]
+        }
+      },
+      "steps": {},
+      "outcomes": null,
+      "recoveries": null
+    }
+  }
+}

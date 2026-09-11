@@ -76,7 +76,7 @@ def member_balance_dict() -> dict[str, Any]:
         "description": "Signs on as the operator, searches a member by number, opens the member record and reads the Regular Shares balance.",
         "approval": "approved",
         "target": {
-            "surface": "legacy_web", "app": "harborline-cu", "app_version": "4.2.1",
+            "surface": "legacy_web", "app": "harborline-cu", "app_version": "3.7.2",
             "tenant": "alpha", "entry_url": ALPHA_ENTRY,
             "viewport": {"width": 1280, "height": 800},
         },
@@ -145,7 +145,7 @@ def beta_override_dict() -> dict[str, Any]:
     different labels and button text, different version. Every string below is one a naive
     recording would have baked in. This override is the whole port — no re-recording."""
     return {
-        "note": "Cedarvale FCU skin, product v5.0: single page (no frameset), div layout, renamed labels.",
+        "note": "Cedarvale FCU skin, product v6.1: single page (no frameset), div layout, renamed labels.",
         "entry_url": "http://localhost:4599/t/beta/",
         "frame_map": {"nav": "", "content": ""},
         "aliases": {

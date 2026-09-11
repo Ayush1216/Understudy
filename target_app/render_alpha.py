@@ -1,4 +1,4 @@
-"""Tenant alpha: HARBORLINE CU "Member Services Console" v4.2.1.
+"""Tenant alpha: HARBORLINE CU "Member Services Console" v3.7.2.
 
 1998 enterprise HTML on purpose: a frameset, layout tables, <td class="lbl"> label cells that
 are siblings of the input (never <label for>), a <font> wrapper one level below every visible
@@ -54,7 +54,7 @@ def _page(s: Session, title: str, body: str) -> str:
     status = ""
     if s.operator:
         status = (
-            '<tr><td bgcolor="#000080"><font face="Verdana" size="1" color="#FFFFFF">'
+            '<tr><td bgcolor="#3a2f1b"><font face="Verdana" size="1" color="#f5c542">'
             f"OPR {s.operator.upper()} | BR MAIN-001 | {date.today():%m/%d/%Y} | SID {s.id[:8]}"
             "</font></td></tr>"
         )
@@ -64,10 +64,10 @@ def _page(s: Session, title: str, body: str) -> str:
 body {{ margin: 0; }} h1 {{ margin: 6px 0 10px 0; }} .lbl {{ font-weight: bold; }}
 .err {{ color: #CC0000; font-weight: bold; }}
 </style></head>
-<body bgcolor="#C0C0C0" text="#000000" link="#000080" vlink="#000080">
+<body bgcolor="#d6d0bf" text="#000000" link="#7a3b12" vlink="#7a3b12">
 <table width="100%" border="0" cellpadding="4" cellspacing="0">
-<tr><td bgcolor="#000080"><font face="Verdana" size="2" color="#FFFFFF"><b>HARBORLINE CU - Member Services Console v4.2.1</b></font></td></tr>
-<tr><td bgcolor="#FFFFFF" valign="top" height="400">{body}</td></tr>
+<tr><td bgcolor="#3a2f1b"><font face="Verdana" size="2" color="#f5c542"><b>HARBORLINE CU - Member Services Console v3.7.2</b></font></td></tr>
+<tr><td bgcolor="#fbf8ee" valign="top" height="400">{body}</td></tr>
 {status}
 <tr><td><font face="Courier New" size="1">F3=Sign Off  F5=Main Menu  F7=Member Inquiry  F12=Cancel</font></td></tr>
 </table>
@@ -76,7 +76,7 @@ body {{ margin: 0; }} h1 {{ margin: 6px 0 10px 0; }} .lbl {{ font-weight: bold; 
 
 def frameset() -> str:
     return f"""{DOCTYPE}
-<html><head><title>HARBORLINE CU - Member Services Console v4.2.1</title></head>
+<html><head><title>HARBORLINE CU - Member Services Console v3.7.2</title></head>
 <frameset cols="200,*" frameborder="1" border="2">
 <frame name="nav" src="{BASE}/nav" scrolling="no" noresize>
 <frame name="content" src="{BASE}/signon">
@@ -91,7 +91,7 @@ def nav() -> str:
     )
     return f"""{DOCTYPE}
 <html><head><title>Navigation</title></head>
-<body bgcolor="#000080" text="#FFFFFF" link="#FFFFFF" vlink="#FFFFFF">
+<body bgcolor="#3a2f1b" text="#f5c542" link="#f5c542" vlink="#f5c542">
 <table border="0" cellpadding="4"><tr><td>{f('<b>HARBORLINE CU</b>')}</td></tr>{links}</table>
 </body></html>"""
 
@@ -104,7 +104,7 @@ def signon(s: Session, token: str, error: str | None = None) -> str:
 <tr>{lbl("Password:")}<td><input type="password" name="{NAMES['pass']}" size="12" maxlength="16"></td></tr>
 <tr><td></td><td><input type="submit" value="Sign On"></td></tr>
 </table></form>
-<font face="Verdana" size="1" color="#808080">Demo operators: teller1 / password (TELLER) &nbsp; super1 / password (SUPERVISOR)</font>"""
+<font face="Verdana" size="1" color="#6b6152">Demo operators: teller1 / password (TELLER) &nbsp; super1 / password (SUPERVISOR)</font>"""
     return _page(s, "Sign On", body)
 
 
@@ -126,7 +126,7 @@ def search(s: Session, not_found: str | None = None) -> str:
 <table border="0" cellpadding="2">
 <tr>{lbl("Member No.:")}<td><input type="text" name="{NAMES['member']}" size="10" maxlength="6"></td><td><input type="submit" value="Retrieve"></td></tr>
 </table></form>
-<font face="Verdana" size="1" color="#808080">Try member numbers 100234, 100987, 101555, 102777, 103001.</font>"""
+<font face="Verdana" size="1" color="#6b6152">Try member numbers 100234, 100987, 101555, 102777, 103001.</font>"""
     return _page(s, "Member Inquiry", body)
 
 
@@ -142,7 +142,7 @@ def record(s: Session, m: Member) -> str:
         + row("Member No.:", m.number) + row("Name:", m.name) + row("E-mail:", m.email)
         + row("Phone:", m.phone) + row("Address:", m.address)
         + "</table><br>" + f("<b>SHARES / BALANCES</b>")
-        + f'<table border="1" cellpadding="3" cellspacing="0" bordercolor="#808080"><tr bgcolor="#E0E0E0">{head}</tr>{rows}</table><br>'
+        + f'<table border="1" cellpadding="3" cellspacing="0" bordercolor="#8a8270"><tr bgcolor="#e6e0cd">{head}</tr>{rows}</table><br>'
         + f("<b>ACTIONS</b>") + "<br>" + a(f"{BASE}/members/{m.number}/open-share", "Open New Share")
     )
     return _page(s, "Member Record", body)

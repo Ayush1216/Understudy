@@ -1,0 +1,17 @@
+{
+  "run_id": "replay-20260911-035310-b5e06f",
+  "capability": {
+    "id": "cap_alpha_member_lookup",
+    "name": "alpha.member.lookup",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 593,
+  "evidence_dir": "evidence/runs/replay-20260911-035310-b5e06f",
+  "status": "success",
+  "outputs": {
+    "member_name": "Hopper, Grace",
+    "regular_shares_balance": 310.42
+  },
+  "steps_executed": 7
+}

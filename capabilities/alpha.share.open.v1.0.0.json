@@ -9,7 +9,7 @@
   "target": {
     "surface": "legacy_web",
     "app": "harborline-cu",
-    "app_version": "4.2.1",
+    "app_version": "3.7.2",
     "tenant": "alpha",
     "entry_url": "http://localhost:4599/t/alpha/",
     "viewport": {

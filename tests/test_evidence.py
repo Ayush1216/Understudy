@@ -247,3 +247,21 @@ def test_corrupt_sidecar_warns_and_starts_fresh_instead_of_crashing_the_run(tmp_
     assert record_stability(tmp_path, "a@1.0.0", None, "success", {})["runs"] == 1
     assert "corrupt" in capsys.readouterr().err
     assert read_stability(tmp_path, "a@1.0.0", None)["runs"] == 1
+
+
+def test_a_run_dir_rooted_path_is_not_rooted_twice(tmp_path):
+    """screenshot_path()/dom_path() hand back run-dir-rooted paths; write_bytes must not join
+    them again or the file lands in evidence/runs/<id>/evidence/runs/<id>/... — on disk, but
+    invisible to anyone reading the run directory."""
+    ev = EvidenceDir(tmp_path / "evidence", "replay-1", StubRedactor())
+    shot = ev.screenshot_path("entry")
+    written = ev.write_bytes(shot, b"\x89PNG")
+    assert written == shot
+    assert written.read_bytes() == b"\x89PNG"
+    assert "evidence/runs/replay-1/evidence" not in written.as_posix()
+    assert [p.name for p in (ev.run_dir / "screenshots").iterdir()] == ["00-entry.png"]
+
+    dom = ev.write_text(ev.dom_path("failure"), "<html></html>")
+    assert dom.parent == ev.run_dir / "dom"
+    # a plain relative name still roots at the run dir
+    assert ev.write_text("notes.txt", "x").parent == ev.run_dir

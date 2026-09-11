@@ -370,7 +370,7 @@ async def test_beta_is_the_same_flow_in_different_words_without_a_frameset():
         r = await c.get("/t/beta/signon")
         assert "<frameset" not in r.text and "<font" not in r.text
         assert "User ID" in r.text and "Passcode" in r.text and ">Sign In</button>" in r.text
-        assert 'name="user"' in r.text and 'name="pass"' in r.text and "v5.0" in r.text
+        assert 'name="user"' in r.text and 'name="pass"' in r.text and "v6.1" in r.text
         r = await sign_on(c, tenant="beta")
         assert r.status_code == 302
         r = await c.get("/t/beta/menu")

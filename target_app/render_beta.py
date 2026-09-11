@@ -1,4 +1,4 @@
-"""Tenant beta: CEDARVALE FCU "Account Servicing" v5.0 — the same product, reskinned.
+"""Tenant beta: CEDARVALE FCU "Account Servicing" v6.1 — the same product, reskinned.
 
 No frameset, div layout for forms, different labels, button text and chrome. It differs from
 alpha only where tests/fixtures.py's beta override says it does; everything else is identical,
@@ -36,14 +36,14 @@ def _page(s: Session, title: str, body: str) -> str:
     return f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Account Servicing - {esc(title)}</title>
 <style>
-body {{ margin: 0; font: 14px/1.4 Arial, sans-serif; background: #f4f6f5; color: #222; }}
-.topbar {{ background: #1b5e20; color: #fff; padding: 10px 16px; display: flex; gap: 24px; align-items: center; }}
+body {{ margin: 0; font: 14px/1.4 Arial, sans-serif; background: #f5f6f8; color: #222; }}
+.topbar {{ background: #2f4858; color: #fff; padding: 10px 16px; display: flex; gap: 24px; align-items: center; }}
 .topbar a {{ color: #fff; text-decoration: none; }} .brand {{ font-weight: bold; margin-right: auto; }}
-main {{ max-width: 760px; margin: 24px auto; background: #fff; padding: 20px 28px; border: 1px solid #cfd8d3; }}
+main {{ max-width: 760px; margin: 24px auto; background: #fff; padding: 20px 28px; border: 1px solid #ccd3da; }}
 h1 {{ font-size: 20px; margin: 0 0 12px; }} h2 {{ font-size: 15px; margin: 18px 0 6px; }}
 .field {{ margin: 10px 0; }} .field .lbl {{ display: inline-block; width: 160px; color: #444; }}
 .err {{ color: #b00020; font-weight: bold; margin: 8px 0; }} .hint {{ color: #888; font-size: 12px; }}
-button {{ background: #1b5e20; color: #fff; border: 0; padding: 6px 14px; }}
+button {{ background: #2f4858; color: #fff; border: 0; padding: 6px 14px; }}
 table.grid {{ border-collapse: collapse; }} table.grid th, table.grid td {{ border: 1px solid #bbb; padding: 4px 10px; }}
 table.profile td {{ padding: 3px 12px 3px 0; }} table.profile td.lbl {{ color: #444; }}
 footer {{ max-width: 760px; margin: 12px auto; color: #777; font-size: 12px; }}
@@ -52,7 +52,7 @@ footer {{ max-width: 760px; margin: 12px auto; color: #777; font-size: 12px; }}
 <nav class="topbar"><span class="brand">CEDARVALE FCU · Account Servicing</span>
 <a href="{BASE}/menu">Home</a><a href="{BASE}/search">Find Member</a><a href="{BASE}/signoff">Sign Off</a></nav>
 <main>{body}</main>
-<footer>Account Servicing v5.0{who}</footer>
+<footer>Account Servicing v6.1{who}</footer>
 </body></html>"""
 
 

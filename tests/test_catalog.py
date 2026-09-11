@@ -101,6 +101,12 @@ def test_tool_schema_maps_enum_inputs_and_omits_secret_outputs_from_the_contract
         {"name": "share_type", "type": "enum", "enum_values": ["regular", "checking"], "description": "which", "required": False},
     ])
     d = cap.model_dump(mode="json")
+    # Lint refuses an input no step uses, so give share_type a real consumer.
+    d["steps"].insert(5, {
+        "id": "s5b", "description": "Choose the share type",
+        "action": {"type": "select", "value": "{{inputs.share_type}}",
+                   "target": d["steps"][4]["action"]["target"]},
+    })
     d["outputs"][0]["sensitivity"] = "secret"
     write_capability(cap.model_validate(d), tmp_path)
     fn = load_catalog(tmp_path).tool_schemas()[0]["function"]

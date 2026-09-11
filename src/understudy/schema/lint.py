@@ -140,6 +140,13 @@ def lint_capability(cap: Capability, known_values: Iterable[str] = ()) -> list[L
         if RISK_RANK[s.risk] > ceiling:
             issues.append(LintIssue(code="L009", message=f"step {s.id} risk {s.risk!r} exceeds policy_declaration.max_risk {cap.policy_declaration.max_risk!r}", path=f"$.steps[{s.id}]"))
 
+    # L012 every declared input must actually be used. A required field nothing references is
+    # dead weight in the agent-facing contract: the caller must supply it and it changes nothing.
+    used = {name for kind, name in refs if kind == "inputs"}
+    for p in cap.inputs:
+        if p.name not in used:
+            issues.append(LintIssue(code="L012", message=f"input {p.name!r} is declared but never referenced by any step, checkpoint or output", path="$.inputs"))
+
     # L011 a numeric output needs a transform that can actually produce a number. Caught here
     # because it type-checks perfectly at record time and then fails on every single replay.
     for o in cap.outputs:
