@@ -140,6 +140,12 @@ def lint_capability(cap: Capability, known_values: Iterable[str] = ()) -> list[L
         if RISK_RANK[s.risk] > ceiling:
             issues.append(LintIssue(code="L009", message=f"step {s.id} risk {s.risk!r} exceeds policy_declaration.max_risk {cap.policy_declaration.max_risk!r}", path=f"$.steps[{s.id}]"))
 
+    # L011 a numeric output needs a transform that can actually produce a number. Caught here
+    # because it type-checks perfectly at record time and then fails on every single replay.
+    for o in cap.outputs:
+        if o.type in ("currency", "number") and o.source.transform not in ("currency_to_number", "digits_only"):
+            issues.append(LintIssue(code="L011", message=f"output {o.name!r} is a {o.type} but transform is {o.source.transform!r}, which cannot produce a number", path=f"$.outputs[{o.name}]"))
+
     # L010 an outcome detector must not be satisfiable by the success state alone: we cannot
     # evaluate it here, but we can catch the trivial case of an empty/always-true detector.
     for o in cap.outcomes:

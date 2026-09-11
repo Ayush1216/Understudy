@@ -340,10 +340,21 @@ class DiscoveryRun:
         except LookupError as e:
             raise _ToolError(_UNKNOWN_REF.format(ref=ref) if "re-observe" in str(e) else _NO_ANCHOR)
         kind = args.get("type", "string")
+        transform = args.get("transform") or ("currency_to_number" if kind == "currency" else "trim")
+        # A numeric output whose transform cannot yield a number is incoherent: the screen holds
+        # "$310.42", the contract promises a float, and nothing bridges them. The model picks the
+        # transform and gets this wrong, so the recording overrules it rather than shipping a
+        # capability that type-checks at record time and fails at every replay.
+        if kind in ("currency", "number") and transform not in ("currency_to_number", "digits_only"):
+            self.logger.emit(
+                "recorder.overruled", what=f"outputs.{name}.transform",
+                why=f"{transform!r} cannot produce a {kind}; using currency_to_number",
+            )
+            transform = "currency_to_number"
         try:
             spec = OutputSpec(
                 name=name, type=kind, description=str(args.get("description", "")), sensitivity=args.get("sensitivity") or "public",
-                source=OutputSource(kind="text_of", target=target, transform=args.get("transform") or ("currency_to_number" if kind == "currency" else "trim")),
+                source=OutputSource(kind="text_of", target=target, transform=transform),
             )
         except ValidationError as e:
             raise _ToolError(f"invalid output: {_errors(e)}")
@@ -508,7 +519,7 @@ def _assistant(turn: ModelTurn) -> dict[str, Any]:
             {"id": tc.id, "type": "function", "function": {
                 "name": tc.name,
                 "arguments": tc.arguments["_parse_error"] if "_parse_error" in tc.arguments else json.dumps(tc.arguments),
-            }}
+            }, **tc.passthrough}
             for tc in turn.tool_calls
         ]
     return message

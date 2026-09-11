@@ -71,7 +71,9 @@ def extracted(seq, name, target):
 
 
 def output(name, target, type="string"):
-    return OutputSpec(name=name, type=type, description=name, source=OutputSource(kind="text_of", target=target))
+    transform = "currency_to_number" if type in ("currency", "number") else "trim"
+    return OutputSpec(name=name, type=type, description=name,
+                      source=OutputSource(kind="text_of", target=target, transform=transform))
 
 
 def outcome(code, text):

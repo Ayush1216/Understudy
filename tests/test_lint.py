@@ -95,3 +95,13 @@ def test_assert_lints_clean_raises_with_all_issues():
     with pytest.raises(LintError) as ei:
         assert_lints_clean(Capability.model_validate(d))
     assert {i.code for i in ei.value.issues} >= {"L001", "L004"}
+
+
+def test_numeric_output_needs_a_numeric_transform():
+    # It type-checks at record time and then fails on every replay: the screen holds "$310.42",
+    # the contract promises a float, and `transform: none` bridges nothing.
+    d = member_balance_dict()
+    d["outputs"][1]["source"]["transform"] = "none"
+    assert "L011" in codes(Capability.model_validate(d))
+    d["outputs"][1]["source"]["transform"] = "currency_to_number"
+    assert "L011" not in codes(Capability.model_validate(d))

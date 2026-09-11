@@ -29,6 +29,10 @@ class ToolCall:
     id: str
     name: str
     arguments: dict[str, Any]
+    # Provider-specific fields that must be echoed back on the next turn, verbatim. Gemini 3.x
+    # rejects a follow-up request whose tool_calls dropped its `thought_signature`, so a client
+    # that rebuilds the assistant message from name+arguments alone cannot hold a conversation.
+    passthrough: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -150,7 +154,11 @@ def _parse(response: Any) -> ModelTurn:
                 raise ValueError("not an object")
         except ValueError:
             args = {"_parse_error": raw_args}
-        turn.tool_calls.append(ToolCall(id=tc.id or f"call_{i}", name=fn.name, arguments=args))
+        dumped = tc.model_dump(mode="json") if hasattr(tc, "model_dump") else {}
+        passthrough = {k: v for k, v in dumped.items() if k not in ("id", "type", "function") and v is not None}
+        turn.tool_calls.append(
+            ToolCall(id=tc.id or f"call_{i}", name=fn.name, arguments=args, passthrough=passthrough)
+        )
     return turn
 
 
