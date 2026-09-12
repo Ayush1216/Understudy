@@ -141,3 +141,31 @@ def test_catalog_list_tools_describe_and_approve(target_server, tmp_path, capsys
 def test_malformed_input_is_a_usage_error_with_exit_2(capsys):
     assert main(["replay", "x.json", "--input", "member_number"]) == 2
     assert "expected NAME=VALUE" in capsys.readouterr().err
+
+
+def test_the_same_input_twice_with_two_values_is_refused_rather_than_last_wins(artifact, policy_path, tmp_path, capsys):
+    """Silently taking the last one would run the capability against something nobody asked for."""
+    common = _common(policy_path, tmp_path)
+    assert main(["replay", str(artifact), "--input", "member_number=100987", "--input", "member_number=100234", *common]) == 2
+    assert "given twice" in capsys.readouterr().err
+    # A repeat that does not conflict is not a typo: it falls through to ordinary validation.
+    assert main(["replay", str(artifact), "--input", "member_number=abc", "--input", "member_number=abc", *common]) == 1
+    assert "INPUT_INVALID" in capsys.readouterr().err
+
+
+def test_an_unknown_or_inexpressible_inject_mode_is_a_usage_error(capsys, artifact):
+    assert main(["replay", str(artifact), *MEMBER, "--inject", "not_a_mode"]) == 2
+    assert "unknown mode 'not_a_mode'" in capsys.readouterr().err
+    assert main(["replay", str(artifact), *MEMBER, "--inject", "error_rate"]) == 2
+    assert "sticky and probabilistic" in capsys.readouterr().err
+
+
+def test_a_console_port_already_taken_names_the_fix_instead_of_spinning(
+    reset_target, operator_env, policy_path, tmp_path, artifact, target_server, capsys
+):
+    """uvicorn logs a bind failure and retries rather than raising; without the preflight the
+    run waits on `server.started` forever."""
+    port = int(target_server.rsplit(":", 1)[1])  # the target app already holds this one
+    assert main(["replay", str(artifact), *MEMBER, "--console", "--console-port", str(port),
+                 *_common(policy_path, tmp_path)]) == 2
+    assert "cannot bind" in capsys.readouterr().err

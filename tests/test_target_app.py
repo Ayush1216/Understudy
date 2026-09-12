@@ -7,6 +7,7 @@ import pytest
 from httpx import ASGITransport
 
 from target_app.app import app
+from target_app import faults
 from target_app.faults import Session
 
 TOKEN = re.compile(r'name="_token" value="([0-9a-f]+)"')
@@ -404,3 +405,11 @@ async def test_unknown_tenant_is_404():
     async with client() as c:
         assert (await c.get("/t/gamma/")).status_code == 404
         assert (await c.get("/t/gamma/signon")).status_code == 404
+
+
+def test_the_cli_inject_flag_offers_exactly_the_apps_per_request_modes():
+    """`--inject` lists the modes in cli.py rather than importing the demo app, so the two can
+    drift. error_rate is excluded there because it is sticky and probabilistic."""
+    from understudy.cli import INJECTABLE
+
+    assert set(INJECTABLE) == faults.PER_REQUEST_MODES

@@ -159,10 +159,17 @@ def test_echo_prints_one_line_for_summary_events_only_and_never_on_stdout(tmp_pa
 
 def test_evidence_dir_layout(evidence: EvidenceDir, tmp_path: Path):
     assert evidence.run_dir == tmp_path / "evidence" / "runs" / "replay-x"
-    assert (evidence.run_dir / "screenshots").is_dir()
-    assert (evidence.run_dir / "dom").is_dir()
     assert evidence.log_path == evidence.run_dir / "run.jsonl"
     assert evidence.relative(evidence.run_dir) == "evidence/runs/replay-x"
+    # Nothing on disk yet — not from EvidenceDir, and not from the RunLogger it hands its
+    # log_path to: a run that dies at startup must leave no empty directory for whoever reads
+    # `evidence/runs/` later. Each subdirectory appears with its first file.
+    RunLogger("replay-x", evidence.log_path, evidence._redactor)
+    assert not evidence.run_dir.exists()
+    evidence.write_bytes(evidence.screenshot_path("entry"), b"\x89PNG")
+    assert (evidence.run_dir / "screenshots").is_dir() and not (evidence.run_dir / "dom").exists()
+    evidence.write_text(evidence.dom_path("failure"), "<html>")
+    assert (evidence.run_dir / "dom").is_dir()
 
 
 def test_screenshots_and_dom_snapshots_are_numbered_and_slugified(evidence: EvidenceDir):

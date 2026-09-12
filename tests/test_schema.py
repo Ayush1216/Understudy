@@ -96,7 +96,6 @@ def test_checkpoint_union_is_recursive():
 
 
 def test_inputs_produce_a_tool_schema():
-    cap = member_balance()
     schema = ParamSpec.model_json_schema()
     assert schema["additionalProperties"] is False
     assert "sensitivity" in schema["properties"]

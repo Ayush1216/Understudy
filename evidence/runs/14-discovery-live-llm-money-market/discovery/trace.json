@@ -1,0 +1,948 @@
+[
+  {
+    "seq": 1,
+    "tool": "type_text",
+    "args": {
+      "text": "{{secrets.APP_OPERATOR}}",
+      "ref": "c4",
+      "why": "Enter operator ID credential into the Operator ID field"
+    },
+    "why": "Enter operator ID credential into the Operator ID field",
+    "target": {
+      "role": "textbox",
+      "label": "Operator ID",
+      "rationale": "adjacent-cell label \"Operator ID\"; no <label for> on this markup; name=u as fallback",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "act",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.9,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "inferred_label",
+          "role": "textbox",
+          "label": "Operator ID"
+        },
+        {
+          "confidence": 0.7,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "attribute",
+          "attr": "name",
+          "value": "u",
+          "role": "textbox"
+        },
+        {
+          "confidence": 0.55,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "nth_of_role",
+          "role": "textbox",
+          "index": 0
+        },
+        {
+          "confidence": 0.4,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "css",
+          "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+        },
+        {
+          "confidence": 0.2,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "coordinate",
+          "x": 153.546875,
+          "y": 80.25,
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "type",
+      "target": {
+        "role": "textbox",
+        "label": "Operator ID",
+        "rationale": "adjacent-cell label \"Operator ID\"; no <label for> on this markup; name=u as fallback",
+        "frame_path": [
+          "content"
+        ],
+        "intent": "act",
+        "scope": null,
+        "strategies": [
+          {
+            "confidence": 0.9,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "inferred_label",
+            "role": "textbox",
+            "label": "Operator ID"
+          },
+          {
+            "confidence": 0.7,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "attribute",
+            "attr": "name",
+            "value": "u",
+            "role": "textbox"
+          },
+          {
+            "confidence": 0.55,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "nth_of_role",
+            "role": "textbox",
+            "index": 0
+          },
+          {
+            "confidence": 0.4,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "css",
+            "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+          },
+          {
+            "confidence": 0.2,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "coordinate",
+            "x": 153.546875,
+            "y": 80.25,
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            }
+          }
+        ]
+      },
+      "value": "{{secrets.APP_OPERATOR}}",
+      "clear_first": true
+    },
+    "risk": "safe",
+    "url_before": "http://localhost:4599/t/alpha/signon",
+    "url_after": "http://localhost:4599/t/alpha/signon",
+    "navigated": false,
+    "text_before": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nOPERATOR SIGN ON\nOperator ID:\t\nPassword:\t\n\t\n«redacted» operators: «redacted:secret» / «redacted:secret» (TELLER)   super1 / «redacted:secret» (SUPERVISOR)\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "text_after": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nOPERATOR SIGN ON\nOperator ID:\t\nPassword:\t\n\t\n«redacted» operators: «redacted:secret» / «redacted:secret» (TELLER)   super1 / «redacted:secret» (SUPERVISOR)\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "sig_before": "http://localhost:4599/t/alpha/signon|button:Sign On,link:Main Menu,link:Member Search,link:Sign Off,textbox:Operator ID,textbox:Password",
+    "sig_after": "http://localhost:4599/t/alpha/signon|button:Sign On,link:Main Menu,link:Member Search,link:Sign Off,textbox:Operator ID,textbox:Password"
+  },
+  {
+    "seq": 2,
+    "tool": "type_text",
+    "args": {
+      "text": "{{secrets.APP_PASSWORD}}",
+      "why": "Enter operator «redacted:secret» credential into the Password field",
+      "ref": "c5"
+    },
+    "why": "Enter operator «redacted:secret» credential into the Password field",
+    "target": {
+      "role": "textbox",
+      "label": "Password",
+      "rationale": "adjacent-cell label \"Password\"; no <label for> on this markup; name=p as fallback",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "act",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.9,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "inferred_label",
+          "role": "textbox",
+          "label": "Password"
+        },
+        {
+          "confidence": 0.7,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "attribute",
+          "attr": "name",
+          "value": "p",
+          "role": "textbox"
+        },
+        {
+          "confidence": 0.55,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "nth_of_role",
+          "role": "textbox",
+          "index": 1
+        },
+        {
+          "confidence": 0.4,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "css",
+          "selector": "tbody:nth-of-type(1) > tr:nth-of-type(2) > td:nth-of-type(2) > input:nth-of-type(1)"
+        },
+        {
+          "confidence": 0.2,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "coordinate",
+          "x": 153.546875,
+          "y": 107.75,
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "type",
+      "target": {
+        "role": "textbox",
+        "label": "Password",
+        "rationale": "adjacent-cell label \"Password\"; no <label for> on this markup; name=p as fallback",
+        "frame_path": [
+          "content"
+        ],
+        "intent": "act",
+        "scope": null,
+        "strategies": [
+          {
+            "confidence": 0.9,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "inferred_label",
+            "role": "textbox",
+            "label": "Password"
+          },
+          {
+            "confidence": 0.7,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "attribute",
+            "attr": "name",
+            "value": "p",
+            "role": "textbox"
+          },
+          {
+            "confidence": 0.55,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "nth_of_role",
+            "role": "textbox",
+            "index": 1
+          },
+          {
+            "confidence": 0.4,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "css",
+            "selector": "tbody:nth-of-type(1) > tr:nth-of-type(2) > td:nth-of-type(2) > input:nth-of-type(1)"
+          },
+          {
+            "confidence": 0.2,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "coordinate",
+            "x": 153.546875,
+            "y": 107.75,
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            }
+          }
+        ]
+      },
+      "value": "{{secrets.APP_PASSWORD}}",
+      "clear_first": true
+    },
+    "risk": "safe",
+    "url_before": "http://localhost:4599/t/alpha/signon",
+    "url_after": "http://localhost:4599/t/alpha/signon",
+    "navigated": false,
+    "text_before": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nOPERATOR SIGN ON\nOperator ID:\t\nPassword:\t\n\t\n«redacted» operators: «redacted:secret» / «redacted:secret» (TELLER)   super1 / «redacted:secret» (SUPERVISOR)\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "text_after": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nOPERATOR SIGN ON\nOperator ID:\t\nPassword:\t\n\t\n«redacted» operators: «redacted:secret» / «redacted:secret» (TELLER)   super1 / «redacted:secret» (SUPERVISOR)\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "sig_before": "http://localhost:4599/t/alpha/signon|button:Sign On,link:Main Menu,link:Member Search,link:Sign Off,textbox:Operator ID,textbox:Password",
+    "sig_after": "http://localhost:4599/t/alpha/signon|button:Sign On,link:Main Menu,link:Member Search,link:Sign Off,textbox:Operator ID,textbox:Password"
+  },
+  {
+    "seq": 3,
+    "tool": "click",
+    "args": {
+      "why": "Submit operator sign on credentials",
+      "ref": "c6"
+    },
+    "why": "Submit operator sign on credentials",
+    "target": {
+      "role": "button",
+      "label": "Sign On",
+      "rationale": "button value \"Sign On\"; value=Sign On as fallback",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "act",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.95,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "role_name",
+          "role": "button",
+          "name": "Sign On",
+          "exact": true
+        },
+        {
+          "confidence": 0.8,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "text",
+          "text": "Sign On",
+          "role": "button",
+          "exact": true
+        },
+        {
+          "confidence": 0.7,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "attribute",
+          "attr": "value",
+          "value": "Sign On",
+          "role": "button"
+        },
+        {
+          "confidence": 0.55,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "nth_of_role",
+          "role": "button",
+          "index": 0
+        },
+        {
+          "confidence": 0.4,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "css",
+          "selector": "tbody:nth-of-type(1) > tr:nth-of-type(3) > td:nth-of-type(2) > input:nth-of-type(1)"
+        },
+        {
+          "confidence": 0.2,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "coordinate",
+          "x": 138.8828125,
+          "y": 135.25,
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "click",
+      "target": {
+        "role": "button",
+        "label": "Sign On",
+        "rationale": "button value \"Sign On\"; value=Sign On as fallback",
+        "frame_path": [
+          "content"
+        ],
+        "intent": "act",
+        "scope": null,
+        "strategies": [
+          {
+            "confidence": 0.95,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "role_name",
+            "role": "button",
+            "name": "Sign On",
+            "exact": true
+          },
+          {
+            "confidence": 0.8,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "text",
+            "text": "Sign On",
+            "role": "button",
+            "exact": true
+          },
+          {
+            "confidence": 0.7,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "attribute",
+            "attr": "value",
+            "value": "Sign On",
+            "role": "button"
+          },
+          {
+            "confidence": 0.55,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "nth_of_role",
+            "role": "button",
+            "index": 0
+          },
+          {
+            "confidence": 0.4,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "css",
+            "selector": "tbody:nth-of-type(1) > tr:nth-of-type(3) > td:nth-of-type(2) > input:nth-of-type(1)"
+          },
+          {
+            "confidence": 0.2,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "coordinate",
+            "x": 138.8828125,
+            "y": 135.25,
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            }
+          }
+        ]
+      }
+    },
+    "risk": "safe",
+    "url_before": "http://localhost:4599/t/alpha/signon",
+    "url_after": "http://localhost:4599/t/alpha/menu",
+    "navigated": true,
+    "text_before": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nOPERATOR SIGN ON\nOperator ID:\t\nPassword:\t\n\t\n«redacted» operators: «redacted:secret» / «redacted:secret» (TELLER)   super1 / «redacted:secret» (SUPERVISOR)\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "text_after": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nMAIN MENU\nSelect a function:\n1.\tMember Search\n2.\tSign Off\n\nOPR TELLER1 | BR MAIN-001 | 09/11/2026 | SID e023217c\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "sig_before": "http://localhost:4599/t/alpha/signon|button:Sign On,link:Main Menu,link:Member Search,link:Sign Off,textbox:Operator ID,textbox:Password",
+    "sig_after": "http://localhost:4599/t/alpha/menu|link:Main Menu,link:Member Search,link:Sign Off"
+  },
+  {
+    "seq": 4,
+    "tool": "assert_checkpoint",
+    "args": {
+      "kind": "text_present",
+      "text": "MAIN MENU"
+    },
+    "why": "Verify that the Main Menu is displayed after signing on",
+    "target": null,
+    "action": null,
+    "risk": "safe",
+    "url_before": "",
+    "url_after": "",
+    "navigated": false,
+    "text_before": "",
+    "text_after": "",
+    "sig_before": "",
+    "sig_after": ""
+  },
+  {
+    "seq": 5,
+    "tool": "click",
+    "args": {
+      "why": "Navigate to Member Search page",
+      "ref": "c4"
+    },
+    "why": "Navigate to Member Search page",
+    "target": {
+      "role": "link",
+      "label": "Member Search",
+      "rationale": "accessible name \"Member Search\"",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "act",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.95,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "role_name",
+          "role": "link",
+          "name": "Member Search",
+          "exact": true
+        },
+        {
+          "confidence": 0.55,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "nth_of_role",
+          "role": "link",
+          "index": 0
+        },
+        {
+          "confidence": 0.4,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "css",
+          "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > a:nth-of-type(1)"
+        }
+      ]
+    },
+    "action": {
+      "type": "click",
+      "target": {
+        "role": "link",
+        "label": "Member Search",
+        "rationale": "accessible name \"Member Search\"",
+        "frame_path": [
+          "content"
+        ],
+        "intent": "act",
+        "scope": null,
+        "strategies": [
+          {
+            "confidence": 0.95,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "role_name",
+            "role": "link",
+            "name": "Member Search",
+            "exact": true
+          },
+          {
+            "confidence": 0.55,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "nth_of_role",
+            "role": "link",
+            "index": 0
+          },
+          {
+            "confidence": 0.4,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "css",
+            "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > a:nth-of-type(1)"
+          }
+        ]
+      }
+    },
+    "risk": "safe",
+    "url_before": "http://localhost:4599/t/alpha/menu",
+    "url_after": "http://localhost:4599/t/alpha/search",
+    "navigated": true,
+    "text_before": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nMAIN MENU\nSelect a function:\n1.\tMember Search\n2.\tSign Off\n\nOPR TELLER1 | BR MAIN-001 | 09/11/2026 | SID e023217c\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "text_after": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nMEMBER INQUIRY / SELECTION\nMember No.:\t\t\nTry member numbers 100234, 100987, 101555, 1***7, 103001.\nOPR TELLER1 | BR MAIN-001 | 09/11/2026 | SID e023217c\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "sig_before": "http://localhost:4599/t/alpha/menu|link:Main Menu,link:Member Search,link:Sign Off",
+    "sig_after": "http://localhost:4599/t/alpha/search|button:Retrieve,link:Main Menu,link:Member Search,link:Sign Off,textbox:Member No."
+  },
+  {
+    "seq": 6,
+    "tool": "assert_checkpoint",
+    "args": {
+      "kind": "text_present",
+      "text": "MEMBER INQUIRY / SELECTION"
+    },
+    "why": "Verify navigation to Member Inquiry / Selection screen",
+    "target": null,
+    "action": null,
+    "risk": "safe",
+    "url_before": "",
+    "url_after": "",
+    "navigated": false,
+    "text_before": "",
+    "text_after": "",
+    "sig_before": "",
+    "sig_after": ""
+  },
+  {
+    "seq": 7,
+    "tool": "type_text",
+    "args": {
+      "ref": "c4",
+      "text": "1***7",
+      "why": "Enter member number to search"
+    },
+    "why": "Enter member number to search",
+    "target": {
+      "role": "textbox",
+      "label": "Member No.",
+      "rationale": "adjacent-cell label \"Member No.\"; no <label for> on this markup; name=q as fallback",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "act",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.9,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "inferred_label",
+          "role": "textbox",
+          "label": "Member No."
+        },
+        {
+          "confidence": 0.7,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "attribute",
+          "attr": "name",
+          "value": "q",
+          "role": "textbox"
+        },
+        {
+          "confidence": 0.55,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "nth_of_role",
+          "role": "textbox",
+          "index": 0
+        },
+        {
+          "confidence": 0.4,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "css",
+          "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+        },
+        {
+          "confidence": 0.2,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "coordinate",
+          "x": 147.203125,
+          "y": 80.25,
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "type",
+      "target": {
+        "role": "textbox",
+        "label": "Member No.",
+        "rationale": "adjacent-cell label \"Member No.\"; no <label for> on this markup; name=q as fallback",
+        "frame_path": [
+          "content"
+        ],
+        "intent": "act",
+        "scope": null,
+        "strategies": [
+          {
+            "confidence": 0.9,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "inferred_label",
+            "role": "textbox",
+            "label": "Member No."
+          },
+          {
+            "confidence": 0.7,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "attribute",
+            "attr": "name",
+            "value": "q",
+            "role": "textbox"
+          },
+          {
+            "confidence": 0.55,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "nth_of_role",
+            "role": "textbox",
+            "index": 0
+          },
+          {
+            "confidence": 0.4,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "css",
+            "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(2) > input:nth-of-type(1)"
+          },
+          {
+            "confidence": 0.2,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "coordinate",
+            "x": 147.203125,
+            "y": 80.25,
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            }
+          }
+        ]
+      },
+      "value": "1***7",
+      "clear_first": true
+    },
+    "risk": "safe",
+    "url_before": "http://localhost:4599/t/alpha/search",
+    "url_after": "http://localhost:4599/t/alpha/search",
+    "navigated": false,
+    "text_before": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nMEMBER INQUIRY / SELECTION\nMember No.:\t\t\nTry member numbers 100234, 100987, 101555, 1***7, 103001.\nOPR TELLER1 | BR MAIN-001 | 09/11/2026 | SID e023217c\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "text_after": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nMEMBER INQUIRY / SELECTION\nMember No.:\t\t\nTry member numbers 100234, 100987, 101555, 1***7, 103001.\nOPR TELLER1 | BR MAIN-001 | 09/11/2026 | SID e023217c\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "sig_before": "http://localhost:4599/t/alpha/search|button:Retrieve,link:Main Menu,link:Member Search,link:Sign Off,textbox:Member No.",
+    "sig_after": "http://localhost:4599/t/alpha/search|button:Retrieve,link:Main Menu,link:Member Search,link:Sign Off,textbox:Member No."
+  },
+  {
+    "seq": 8,
+    "tool": "click",
+    "args": {
+      "why": "Submit member lookup",
+      "ref": "c5"
+    },
+    "why": "Submit member lookup",
+    "target": {
+      "role": "button",
+      "label": "Retrieve",
+      "rationale": "button value \"Retrieve\"; value=Retrieve as fallback",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "act",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.95,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "role_name",
+          "role": "button",
+          "name": "Retrieve",
+          "exact": true
+        },
+        {
+          "confidence": 0.8,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "text",
+          "text": "Retrieve",
+          "role": "button",
+          "exact": true
+        },
+        {
+          "confidence": 0.7,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "attribute",
+          "attr": "value",
+          "value": "Retrieve",
+          "role": "button"
+        },
+        {
+          "confidence": 0.55,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "nth_of_role",
+          "role": "button",
+          "index": 0
+        },
+        {
+          "confidence": 0.4,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "css",
+          "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(3) > input:nth-of-type(1)"
+        },
+        {
+          "confidence": 0.2,
+          "origin": "derived",
+          "matches_at_capture": 1,
+          "kind": "coordinate",
+          "x": 226.0234375,
+          "y": 80.25,
+          "viewport": {
+            "width": 1280,
+            "height": 800
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "click",
+      "target": {
+        "role": "button",
+        "label": "Retrieve",
+        "rationale": "button value \"Retrieve\"; value=Retrieve as fallback",
+        "frame_path": [
+          "content"
+        ],
+        "intent": "act",
+        "scope": null,
+        "strategies": [
+          {
+            "confidence": 0.95,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "role_name",
+            "role": "button",
+            "name": "Retrieve",
+            "exact": true
+          },
+          {
+            "confidence": 0.8,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "text",
+            "text": "Retrieve",
+            "role": "button",
+            "exact": true
+          },
+          {
+            "confidence": 0.7,
+            "origin": "captured",
+            "matches_at_capture": 1,
+            "kind": "attribute",
+            "attr": "value",
+            "value": "Retrieve",
+            "role": "button"
+          },
+          {
+            "confidence": 0.55,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "nth_of_role",
+            "role": "button",
+            "index": 0
+          },
+          {
+            "confidence": 0.4,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "css",
+            "selector": "tbody:nth-of-type(1) > tr:nth-of-type(1) > td:nth-of-type(3) > input:nth-of-type(1)"
+          },
+          {
+            "confidence": 0.2,
+            "origin": "derived",
+            "matches_at_capture": 1,
+            "kind": "coordinate",
+            "x": 226.0234375,
+            "y": 80.25,
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            }
+          }
+        ]
+      }
+    },
+    "risk": "safe",
+    "url_before": "http://localhost:4599/t/alpha/search",
+    "url_after": "http://localhost:4599/t/alpha/members/1***7",
+    "navigated": true,
+    "text_before": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nMEMBER INQUIRY / SELECTION\nMember No.:\t\t\nTry member numbers 100234, 100987, 101555, 1***7, 103001.\nOPR TELLER1 | BR MAIN-001 | 09/11/2026 | SID e023217c\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "text_after": "\nHARBORLINE CU\nMain Menu\nMember Search\nSign Off\nHARBORLINE CU - Member Services Console v3.7.2\n\nMEMBER RECORD\nMember No.:\t1***7\nName:\tH***t\nE-mail:\tmargaret.hamilton@example.net\nPhone:\t555-0177\nAddress:\t77 Apollo Drive, Paoli, IN 47454\n\nSHARES / BALANCES\nShare ID\tType\tBalance\tStatus\n1***7-S0001\tRegular Shares\t$5,400.00\tOPEN\n1***7-S0002\tCertificate\t$25,000.00\tOPEN\n1***7-S0003\tMoney Market\t$1,200.00\tOPEN\n1***7-S0004\tCertificate\t$5,000.00\tOPEN\n\nACTIONS\nOpen New Share\nOPR TELLER1 | BR MAIN-001 | 09/11/2026 | SID e023217c\nF3=Sign Off F5=Main Menu F7=Member Inquiry F12=Cancel",
+    "sig_before": "http://localhost:4599/t/alpha/search|button:Retrieve,link:Main Menu,link:Member Search,link:Sign Off,textbox:Member No.",
+    "sig_after": "http://localhost:4599/t/alpha/members/1***7|cell:,cell:Address,cell:E-mail,cell:Member No.,cell:Name,cell:Phone,link:Main Menu,link:Member Search,link:Open New Share,link:Sign Off"
+  },
+  {
+    "seq": 9,
+    "tool": "assert_checkpoint",
+    "args": {
+      "kind": "text_present",
+      "text": "MEMBER RECORD"
+    },
+    "why": "Verify navigation to Member Record screen",
+    "target": null,
+    "action": null,
+    "risk": "safe",
+    "url_before": "",
+    "url_after": "",
+    "navigated": false,
+    "text_before": "",
+    "text_after": "",
+    "sig_before": "",
+    "sig_after": ""
+  },
+  {
+    "seq": 10,
+    "tool": "extract",
+    "args": {
+      "type": "string",
+      "sensitivity": "pii",
+      "transform": "trim",
+      "why": "Read member name from the member record",
+      "ref": "c5",
+      "output_name": "member_name",
+      "description": "Full name of the member"
+    },
+    "why": "Read member name from the member record",
+    "target": {
+      "role": "cell",
+      "label": "Name",
+      "rationale": "adjacent-cell label \"Name\"; no <label for> on this markup",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "read",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.9,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "inferred_label",
+          "role": "cell",
+          "label": "Name"
+        }
+      ]
+    },
+    "action": null,
+    "risk": "safe",
+    "url_before": "",
+    "url_after": "",
+    "navigated": false,
+    "text_before": "",
+    "text_after": "",
+    "sig_before": "",
+    "sig_after": ""
+  },
+  {
+    "seq": 11,
+    "tool": "extract",
+    "args": {
+      "output_name": "money_market_balance",
+      "description": "Money Market account balance",
+      "why": "Read the Money Market balance from the shares and balances table",
+      "type": "currency",
+      "transform": "none",
+      "ref": "c19",
+      "sensitivity": "public"
+    },
+    "why": "Read the Money Market balance from the shares and balances table",
+    "target": {
+      "role": "cell",
+      "label": "",
+      "rationale": "row \"Money Market\" (Type) x column \"Balance\"",
+      "frame_path": [
+        "content"
+      ],
+      "intent": "read",
+      "scope": null,
+      "strategies": [
+        {
+          "confidence": 0.85,
+          "origin": "captured",
+          "matches_at_capture": 1,
+          "kind": "table_cell",
+          "row_anchor": "Money Market",
+          "column": "Balance",
+          "anchor_column": "Type",
+          "inner_role": null
+        }
+      ]
+    },
+    "action": null,
+    "risk": "safe",
+    "url_before": "",
+    "url_after": "",
+    "navigated": false,
+    "text_before": "",
+    "text_after": "",
+    "sig_before": "",
+    "sig_after": ""
+  }
+]

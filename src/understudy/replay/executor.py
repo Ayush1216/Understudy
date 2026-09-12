@@ -68,6 +68,7 @@ class ReplayOptions:
     inputs: dict[str, Any]
     tenant: str | None = None
     headless: bool = True
+    slow_mo_ms: int = 0  # pause between browser operations so a human can watch
     allow_draft: bool = False
     operator_policy_path: Path = Path("config/policy.toml")
     evidence_root: Path = Path("evidence")
@@ -138,9 +139,14 @@ class ReplayRun:
         self.logger.emit("run.start", capability_id=self.cap.id, capability_key=self.cap.key, version=self.cap.version,
                          tenant=opts.tenant, inputs=self.inputs)
         try:
-            self.engine = PolicyEngine(effective_policy(load_operator_policy(opts.operator_policy_path), self.cap.policy_declaration))
+            operator = load_operator_policy(opts.operator_policy_path)
+        except ValueError as e:  # bad path, bad TOML, bad value — operator input, not our bug
+            return self._pend(f"a readable operator policy at {opts.operator_policy_path}", str(e), str(e))
+        try:
+            self.engine = PolicyEngine(effective_policy(operator, self.cap.policy_declaration))
             self.session = await BrowserSession.launch(
-                headless=opts.headless, viewport=self.cap.target.viewport, policy_gate=self.engine, on_violation=self._on_violation,
+                headless=opts.headless, viewport=self.cap.target.viewport, policy_gate=self.engine,
+                on_violation=self._on_violation, slow_mo_ms=opts.slow_mo_ms,
             )
             self.surface = WebSurface(self.session, policy_gate=self.engine)
             self.surface.set_tenant_vocabulary(self.aliases, self.frame_map)
@@ -485,8 +491,10 @@ class ReplayRun:
             shot = self.evidence.write_bytes(self.evidence.screenshot_path(label), await self.surface.screenshot(mask_sensitive=True))
             if dom:
                 dom_path = self.evidence.write_text(self.evidence.dom_path(label), await self.surface.dom_snapshot())
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as e:  # noqa: BLE001 — evidence must never take the run down
+            # But it must not go missing silently either: a reviewer opening a run directory with
+            # no screenshot needs to find out here why, not guess.
+            self.logger.emit("evidence.capture_failed", label=label, error=repr(e))
         return shot, dom_path
 
     @staticmethod

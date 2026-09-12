@@ -43,8 +43,9 @@ class EvidenceDir:
         self.run_id = run_id
         self._redactor = redactor
         self.run_dir = root / "runs" / run_id
-        (self.run_dir / "screenshots").mkdir(parents=True, exist_ok=True)
-        (self.run_dir / "dom").mkdir(exist_ok=True)
+        # Nothing is created here. `_inside` mkdirs on demand, so a run that dies before it writes
+        # anything — a bad --console-port, a Ctrl-C during startup — leaves no empty directory
+        # behind for whoever reads `evidence/runs/` later.
         self._shots = count()
         self._doms = count()
 

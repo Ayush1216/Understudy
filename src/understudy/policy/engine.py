@@ -51,9 +51,14 @@ class Decision(StrictModel):
 
 
 def load_operator_policy(path: Path) -> OperatorPolicy:
-    with path.open("rb") as f:
-        t = tomllib.load(f)
-    return OperatorPolicy.model_validate({**t["allow"], **t["risk"], **t["limits"]})
+    """Every failure — missing file, bad TOML, missing section, bad value — becomes one ValueError
+    naming the path. A run that cannot read its own security boundary must say which file."""
+    try:
+        with path.open("rb") as f:
+            t = tomllib.load(f)
+        return OperatorPolicy.model_validate({**t["allow"], **t["risk"], **t["limits"]})
+    except (OSError, tomllib.TOMLDecodeError, KeyError, ValueError) as e:
+        raise ValueError(f"cannot load the operator policy at {path}: {e}") from e
 
 
 def effective_policy(operator: OperatorPolicy, declaration: PolicyDeclaration | None) -> EffectivePolicy:

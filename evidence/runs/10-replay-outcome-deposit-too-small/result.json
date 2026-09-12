@@ -1,0 +1,16 @@
+{
+  "run_id": "replay-20260911-035328-b971e6",
+  "capability": {
+    "id": "cap_alpha_share_open",
+    "name": "alpha.share.open",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 315,
+  "evidence_dir": "evidence/runs/10-replay-outcome-deposit-too-small",
+  "status": "business_outcome",
+  "code": "DEPOSIT_TOO_SMALL",
+  "message": "The application refused the initial deposit as below its minimum",
+  "outputs": {},
+  "at_step_id": "s7"
+}

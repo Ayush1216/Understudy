@@ -1,0 +1,17 @@
+{
+  "run_id": "replay-20260911-035325-9d9a69",
+  "capability": {
+    "id": "cap_alpha_member_balance",
+    "name": "alpha.member.balance",
+    "version": "1.0.0"
+  },
+  "tenant": "beta",
+  "duration_ms": 425,
+  "evidence_dir": "evidence/runs/08-replay-success-tenant-beta",
+  "status": "success",
+  "outputs": {
+    "member_name": "Lovelace, Ada",
+    "primary_share_balance": 2499.0
+  },
+  "steps_executed": 7
+}

@@ -15,4 +15,8 @@ from .prompt import build_system, render_observation
 from .recorder import Finish, TraceEntry, compile, derive_name
 from .tools import TOOLS
 
-__all__ = [n for n in dir() if not n.startswith("_")]
+__all__ = [
+    "ConfigurationError", "DiscoveryOptions", "DiscoveryResult", "DiscoveryRun", "Finish", "ModelClient",
+    "ModelTurn", "OpenAICompatClient", "ScriptedModelClient", "TOOLS", "ToolCall", "TraceEntry", "build_system",
+    "compile", "derive_name", "load_env_file", "render_observation",
+]

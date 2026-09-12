@@ -195,6 +195,20 @@ async def test_finish_is_refused_when_the_success_text_is_not_on_screen(tmp_path
     assert result.status == "escalated"  # the loop continued to the next turn
 
 
+async def test_finish_is_refused_when_the_success_text_embeds_a_supplied_input(
+    tmp_path, reset_target, policy_path, operator_env
+):
+    """Either the recorder substitutes the literal, giving a checkpoint that depends on how the
+    application renders the value, or it cannot and lint L006 rejects the recording after the fact.
+    Refusing at the tool is the only ending where the model can still pick a heading instead."""
+    # Visible on the entry screen, so it clears the visibility check and reaches the value check.
+    finish = call("finish", summary="x", success_text="Demo operators: teller1")
+    run, result = await discover(tmp_path, reset_target, policy_path, [finish, help_()],
+                                 inputs={"operator_id": "teller1"})
+    assert "embeds the supplied value 'teller1'" in tool_results(run)[0]
+    assert result.status == "escalated"  # refused at the tool, and the loop went on
+
+
 async def test_extract_on_a_ref_without_a_semantic_anchor_is_an_error(tmp_path, reset_target, policy_path, operator_env):
     table = lambda obs, _: call("extract", ref=next(t.ref for f in obs.frames for t in f.tables), output_name="x", type="string", description="", why="")
     run, _ = await discover(tmp_path, reset_target, policy_path, [*TO_RECORD, table, help_()])

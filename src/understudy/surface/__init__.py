@@ -16,4 +16,8 @@ from .protocol import (
     TargetNotResolved,
 )
 
-__all__ = [n for n in dir() if not n.startswith("_")]
+__all__ = [
+    "ActContext", "ActResult", "AmbiguousTarget", "Attempt", "ControlLost", "DocStatus", "Holder", "Mode",
+    "PolicyBlocked", "PolicyGate", "Resolved", "SessionControl", "Surface", "SurfaceError", "SurfaceGone",
+    "TargetNotResolved",
+]

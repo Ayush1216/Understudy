@@ -77,6 +77,7 @@ class DiscoveryOptions:
     app: str = "target"
     app_version: str | None = None
     headless: bool = True
+    slow_mo_ms: int = 0  # pause between browser operations so a human can watch
     operator_policy_path: Path = Path("config/policy.toml")
     evidence_root: Path = Path("evidence")
     capabilities_dir: Path = Path("capabilities")
@@ -139,7 +140,7 @@ class DiscoveryRun:
         self.evidence = EvidenceDir(o.evidence_root, self.run_id, self.redactor)
         self.logger = RunLogger(self.run_id, self.evidence.log_path, self.redactor, echo=o.echo)
         self.session = await BrowserSession.launch(
-            headless=o.headless, policy_gate=self.policy,
+            headless=o.headless, slow_mo_ms=o.slow_mo_ms, policy_gate=self.policy,
             on_violation=lambda url, reason: self.logger.emit("policy.decision", action_type="navigate", url=url, decision="deny", reason=reason),
         )
         self.surface = WebSurface(self.session, policy_gate=self.policy)
@@ -236,8 +237,20 @@ class DiscoveryRun:
             if tc.name == "assert_checkpoint":
                 return await self._assert(args), None
             if tc.name == "finish":
-                if _need(args, "success_text") not in await self.surface.visible_text():
+                text = _need(args, "success_text")
+                if text not in await self.surface.visible_text():
                     raise _ToolError("success_text is not visible; you cannot finish on a screen that does not show it")
+                # Neither ending is acceptable, and both are avoidable here. The recorder would
+                # substitute the literal for {{inputs.x}}, giving a checkpoint that depends on the
+                # application's own rendering of the value ("750" vs "$750.00") and fails on the
+                # next invocation; or, if it cannot substitute, lint L006 rejects the whole
+                # recording — eighteen turns too late for the model to choose other text.
+                if bad := _embedded_input(text, self.options.inputs):
+                    raise _ToolError(
+                        f"success_text embeds the supplied value {bad[1]!r} of input {bad[0]!r}, so it would "
+                        f"hold only for that one invocation; use a screen heading, a field label or a column "
+                        f"header that holds for any record"
+                    )
                 return "Finished.", "finish"
             if tc.name == "request_human_help":
                 return "Escalated to a human operator.", "help"
@@ -523,6 +536,15 @@ def _assistant(turn: ModelTurn) -> dict[str, Any]:
             for tc in turn.tool_calls
         ]
     return message
+
+
+def _embedded_input(text: str, inputs: dict[str, str]) -> tuple[str, str] | None:
+    """(name, value) of the first supplied input whose value is inside `text`. Three characters
+    matches the recorder's own substitution threshold: below it, a hit is as likely coincidence."""
+    for name, value in inputs.items():
+        if len(str(value)) >= 3 and str(value) in text:
+            return name, str(value)
+    return None
 
 
 def _without_images(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:

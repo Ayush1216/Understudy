@@ -1,8 +1,8 @@
 # Evidence
 
-Fourteen committed runs: one genuine LLM-driven discovery, and thirteen deterministic replays
-covering every arm of the result contract. Every run here was produced by the commands in the
-root `README.md`; nothing is hand-written.
+Sixteen committed runs: **two** genuine LLM-driven discoveries, and fourteen deterministic
+replays covering every arm of the result contract. Every run here was produced by the commands in
+the root `README.md`; no log, result or screenshot is hand-written.
 
 ## The contrast the design is built around
 
@@ -11,8 +11,8 @@ Put these two side by side. They are the reason the result contract has four arm
 
 | Run | Verdict | Exit | Who deals with it |
 |---|---|---|---|
-| `replay-20260911-035314-1af3cc` | `business_outcome` `MEMBER_NOT_FOUND` | **0** | the calling agent — "no such member" is an answer |
-| `replay-20260911-035318-f0884f` | `failed` `SURFACE_ERROR` | **1** | a human — the application broke |
+| `03-replay-outcome-member-not-found` | `business_outcome` `MEMBER_NOT_FOUND` | **0** | the calling agent — "no such member" is an answer |
+| `06-replay-failed-surface-error-http-500` | `failed` `SURFACE_ERROR` | **1** | a human — the application broke |
 
 Both "did not return a balance". Only one is a failure. Conflating them is the mistake the
 brief's own glossary warns about, so the artifact *declares* its business outcomes and replay
@@ -20,22 +20,29 @@ checks them before it ever considers a step failed.
 
 ## Every run
 
+Directories are named for what the run demonstrates, in the order the story is best read. The
+original `run_id` — `replay-<timestamp>-<hex>`, as generated — is unchanged inside every
+`result.json` and on every line of `run.jsonl`; only the directory name and the paths pointing at
+it were rewritten, so a reviewer can browse by meaning without losing the identity.
+
 | Directory | Capability | Verdict | Notes |
 |---|---|---|---|
-| `discover-20260911-033837-f203df` | — | **discovery** | the real LLM run: 17 turns, 8 screenshots, full redacted transcript |
-| `replay-20260911-035310-b5e06f` | `alpha.member.lookup` | success | **the discovered artifact**, replayed for a member the model never saw |
-| `replay-20260911-035312-4d5fa8` | `alpha.member.balance` | success | happy path |
-| `replay-20260911-035314-1af3cc` | `alpha.member.balance` | `MEMBER_NOT_FOUND` | declared business outcome, exit 0 |
-| `replay-20260911-035315-ae152a` | `alpha.member.balance` | success | 503 maintenance interstitial, **recovered** |
-| `replay-20260911-035317-89683d` | `alpha.member.balance` | success | 440 session timeout, **re-authenticated and resumed** |
-| `replay-20260911-035318-f0884f` | `alpha.member.balance` | `SURFACE_ERROR` | HTTP 500, exit 1, + DOM snapshot |
-| `replay-20260911-035320-bddae8` | `alpha.member.balance` | success | 4-second stall absorbed by the checkpoint poll |
-| `replay-20260911-035325-9d9a69` | `alpha.member.balance` | success | **tenant `beta`** — same artifact, different skin |
-| `replay-20260911-035327-bb9f33` | `alpha.share.open` | `escalated` | irreversible step, no human attached, exit 2 |
-| `replay-20260911-035328-b971e6` | `alpha.share.open` | `DEPOSIT_TOO_SMALL` | the application refused the deposit |
-| `replay-20260911-035329-1935e5` | `alpha.share.open` | `PERMISSION_DENIED` | restricted member, teller lacks authority |
-| `replay-20260911-035330-b2d2bc` | `alpha.share.open` | success | **a human approved the irreversible step through the console** |
-| `replay-20260911-074556-e65267` | `alpha.share.open` | success | **an operator took the live session and performed the step by hand**, then resumed (scripted; see below) |
+| `00-discovery-live-llm-member-lookup` | — | **discovery** | the real LLM run: 17 turns, 8 screenshots, full redacted transcript |
+| `01-replay-discovered-artifact-new-member` | `alpha.member.lookup` | success | **the discovered artifact**, replayed for a member the model never saw |
+| `02-replay-success-happy-path` | `alpha.member.balance` | success | happy path |
+| `03-replay-outcome-member-not-found` | `alpha.member.balance` | `MEMBER_NOT_FOUND` | declared business outcome, exit 0 |
+| `04-replay-recovered-maintenance-interstitial` | `alpha.member.balance` | success | 503 maintenance interstitial, **recovered** |
+| `05-replay-recovered-session-expiry` | `alpha.member.balance` | success | 440 session timeout, **re-authenticated and resumed** |
+| `06-replay-failed-surface-error-http-500` | `alpha.member.balance` | `SURFACE_ERROR` | HTTP 500, exit 1, + DOM snapshot |
+| `07-replay-slow-load-absorbed` | `alpha.member.balance` | success | 4-second stall absorbed by the checkpoint poll |
+| `08-replay-success-tenant-beta` | `alpha.member.balance` | success | **tenant `beta`** — same artifact, different skin |
+| `09-replay-escalated-nobody-attached` | `alpha.share.open` | `escalated` | irreversible step, no human attached, exit 2 |
+| `10-replay-outcome-deposit-too-small` | `alpha.share.open` | `DEPOSIT_TOO_SMALL` | the application refused the deposit |
+| `11-replay-outcome-permission-denied` | `alpha.share.open` | `PERMISSION_DENIED` | restricted member, teller lacks authority |
+| `12-replay-human-approved-irreversible-step` | `alpha.share.open` | success | **a human approved the irreversible step through the console** |
+| `13-replay-human-took-over-live-session` | `alpha.share.open` | success | **an operator took the live session and performed the step by hand**, then resumed (scripted; see below) |
+| `14-discovery-live-llm-money-market` | — | **discovery** | a second real run, 13 turns, on a goal chosen after the first: it overruled the model twice |
+| `15-replay-second-discovered-artifact` | `alpha.member.moneymarket` | success | the **second** discovered artifact, replayed for a member that run never saw |
 
 ## What is in a run directory
 
@@ -54,9 +61,9 @@ Event types across these runs: `run.start` `step.start` `policy.decision` `targe
 `escalation.raised` `human.action` `human.resolved` `recorder.overruled` `recorder.synthesized`
 `drift.summary` `step.end` `run.end`.
 
-## Five things worth opening
+## Six things worth opening
 
-**1. A failure says what it expected and what it saw.** From `…-f0884f/result.json`:
+**1. A failure says what it expected and what it saw.** From `06-replay-failed-surface-error-http-500/result.json`:
 
 ```json
 { "kind": "SURFACE_ERROR", "step_id": "s6",
@@ -68,7 +75,7 @@ Event types across these runs: `run.start` `step.start` `policy.decision` `targe
 Produced by the same evaluator that made the decision, so triage needs no screenshot. Note the
 member number is already masked inside the URL.
 
-**2. A recovered run looks like an ordinary success.** `…-89683d/result.json` is a plain
+**2. A recovered run looks like an ordinary success.** `05-replay-recovered-session-expiry/result.json` is a plain
 `success`; only `run.jsonl` shows what happened:
 
 ```json
@@ -97,7 +104,7 @@ password finds nothing — redaction happens at the sinks, so nothing sensitive 
 construction.
 
 **5. An operator took the session, and the run resumed without redoing the work.**
-`…-e65267` is the other half of the escalation story: instead of approving, the operator claimed
+`13-replay-human-took-over-live-session` is the other half of the escalation story: instead of approving, the operator claimed
 the intervention, clicked **Confirm** on the live page through the console, and handed control
 back with `resume`. The operator here is `scripts/operator_takeover.py`, so that this run needs
 nobody at a keyboard — the control lease, the console's HTTP and WebSocket routes and the action
@@ -121,8 +128,31 @@ the share already exists, and advances — so an irreversible step a human perfo
 performed twice. `drift.summary` for this run has no entry for `s8`, because `s8` never ran.
 
 `stability.json` beside these directories is per-capability telemetry, not an index: it counts
-every replay ever executed against the evidence root. It happens to sum to exactly these
-thirteen replays.
+every replay ever executed against the evidence root. It happens to sum to exactly the fourteen
+replays committed here.
+
+**6. The recorder overruling the model, in a committed run.**
+`14-discovery-live-llm-money-market` is the whole thesis of `REPORT.md` §7 as evidence rather than
+assertion. Thirteen turns against the same hostile frameset, on a goal picked after the first
+recording existed. Two lines from its `run.jsonl`:
+
+```json
+{"type": "recorder.overruled", "what": "outputs.money_market_balance.transform",
+ "why": "'none' cannot produce a currency; using currency_to_number"}
+{"type": "recorder.overruled", "what": "steps[s5].value",
+ "why": "literal '1***7' replaced by {{inputs.member_number}}"}
+```
+
+The model declared a `currency` output with no transform — type-correct at record time, broken on
+*every* replay — and baked the member number it was handed into a step as a literal. Both were
+rewritten mechanically; lint **L011** and **L012** would have rejected the artifact otherwise.
+
+`capabilities/alpha.member.moneymarket.v1.0.0.json` is deliberately committed **as it came out**:
+`approval: "draft"`, `curated: false`, and therefore **no declared business outcomes and no tenant
+overrides** — one happy-path run never saw a "RECORD NOT FOUND" screen or a second tenant. Replay
+it with `member_number=999999` and it fails a checkpoint where `alpha.member.balance` returns
+`MEMBER_NOT_FOUND` with exit 0. That difference *is* the curation step, and it is why `invoke`
+refuses a draft and `replay --allow-draft` exists as a separate flag.
 
 ## Reproducing
 

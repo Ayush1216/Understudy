@@ -46,6 +46,18 @@ def test_trivially_true_success_checkpoint():
     assert "L004" in codes(cap)
 
 
+def test_a_deposit_matching_the_digits_of_wait_ms_is_not_an_embedded_example():
+    """L006 used to search the serialized checkpoint, where an example of 500 matches the digits of
+    `wait_ms: 5000` and rejects a recording whose success text is a plain heading. Found by a real
+    discovery run, not by a test."""
+    d = member_balance_dict()
+    d["inputs"][0]["example"] = "500"
+    d["success_checkpoint"] = {"kind": "text_present", "text": "REVIEW NEW SHARE", "wait_ms": 5000}
+    assert "L006" not in codes(Capability.model_validate(d))
+    d["success_checkpoint"]["text"] = "DEPOSIT OF 500 POSTED"
+    assert "L006" in codes(Capability.model_validate(d))
+
+
 def test_success_checkpoint_may_not_embed_an_input_example():
     cap = member_balance(success_checkpoint={"kind": "text_present", "text": "Member 100234"})
     assert "L006" in codes(cap)

@@ -1,0 +1,15 @@
+{
+  "run_id": "replay-20260911-035327-bb9f33",
+  "capability": {
+    "id": "cap_alpha_share_open",
+    "name": "alpha.share.open",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 383,
+  "evidence_dir": "evidence/runs/09-replay-escalated-nobody-attached",
+  "status": "escalated",
+  "intervention_id": "iv_6fddda9889",
+  "reason": "RISKY_ACTION_APPROVAL",
+  "at_step_id": "s8"
+}

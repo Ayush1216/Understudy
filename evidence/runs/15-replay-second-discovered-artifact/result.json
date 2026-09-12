@@ -1,0 +1,17 @@
+{
+  "run_id": "replay-20260912-001324-590e79",
+  "capability": {
+    "id": "cap_alpha_member_moneymarket",
+    "name": "alpha.member.moneymarket",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 687,
+  "evidence_dir": "evidence/runs/15-replay-second-discovered-artifact",
+  "status": "success",
+  "outputs": {
+    "member_name": "Hopper, Grace",
+    "money_market_balance": 4020.1
+  },
+  "steps_executed": 7
+}

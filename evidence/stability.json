@@ -51,6 +51,24 @@
       "successes": 1
     }
   },
+  "alpha.member.moneymarket@1.0.0": {
+    "base": {
+      "business_outcomes": 0,
+      "escalations": 0,
+      "failures": 0,
+      "last_run_at": "2026-09-12T00:13:25.691099+00:00",
+      "last_winning_rungs": {
+        "s1": 0,
+        "s2": 0,
+        "s3": 0,
+        "s4": 0,
+        "s5": 0,
+        "s6": 0
+      },
+      "runs": 1,
+      "successes": 1
+    }
+  },
   "alpha.share.open@1.0.0": {
     "base": {
       "business_outcomes": 2,

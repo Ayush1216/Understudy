@@ -28,7 +28,7 @@ RULES
 7. When the goal asks for values, extract one output per value with extract on the cell or control that holds it: the cell next to its label, or a cell in a table with a header row.
 8. Call declare_outcome only for an alternative result a caller must know about (record not found, not authorized, validation rejected) with text that appears only on that screen. Not for the happy path.
 9. When stuck, when an error blocks you, or when a step needs a human decision (an irreversible transaction, an approval), call request_human_help rather than guessing.
-10. Call finish only when the goal is accomplished and its success_text is visible on the current screen. success_text must hold for any record.
+10. Call finish only when the goal is accomplished and its success_text is visible on the current screen. success_text must hold for any record: a screen heading, a field label or a column header — never a supplied input value, an amount or this record's data.
 
 A screenshot is attached only on the first turn, when you call observe with include_screenshot=true, and after a turn that made no visible progress."""
 

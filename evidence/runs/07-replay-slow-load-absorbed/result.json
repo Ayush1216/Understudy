@@ -1,0 +1,17 @@
+{
+  "run_id": "replay-20260911-035320-bddae8",
+  "capability": {
+    "id": "cap_alpha_member_balance",
+    "name": "alpha.member.balance",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 4776,
+  "evidence_dir": "evidence/runs/07-replay-slow-load-absorbed",
+  "status": "success",
+  "outputs": {
+    "member_name": "Lovelace, Ada",
+    "primary_share_balance": 2499.0
+  },
+  "steps_executed": 7
+}

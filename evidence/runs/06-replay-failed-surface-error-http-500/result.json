@@ -1,0 +1,21 @@
+{
+  "run_id": "replay-20260911-035318-f0884f",
+  "capability": {
+    "id": "cap_alpha_member_balance",
+    "name": "alpha.member.balance",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 690,
+  "evidence_dir": "evidence/runs/06-replay-failed-surface-error-http-500",
+  "status": "failed",
+  "error": {
+    "kind": "SURFACE_ERROR",
+    "step_id": "s6",
+    "step_description": "Retrieve the member record",
+    "expected": "the application to return a usable page",
+    "observed": "HTTP 500 from http://localhost:4599/t/alpha/search?q=1***4 — HARBORLINE CU Main Menu Member Search Sign Off HARBORLINE CU - Member Services Console v3.7.2 APPLICATION ERROR APPLICATION ERROR - REF 0x5A2 An unexpected condition was encountered. Contact the help ",
+    "message": "the application returned HTTP 500",
+    "recovery_attempts": []
+  }
+}

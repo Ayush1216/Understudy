@@ -6,4 +6,7 @@ from .extract import OutputMissing, extract_outputs
 from .template import MissingReference, render, render_model
 from .tenant import resolve_for_tenant
 
-__all__ = [n for n in dir() if not n.startswith("_")]
+__all__ = [
+    "MissingReference", "OutputMissing", "ReplayOptions", "ReplayRun", "coerce_inputs", "describe", "evaluate",
+    "extract_outputs", "poll", "render", "render_model", "replay", "resolve_for_tenant",
+]

@@ -21,7 +21,6 @@ from understudy.schema import (
     ControlAbsent,
     ControlPresent,
     HttpStatus,
-    Not,
     TargetDescriptor,
     TextAbsent,
     TextPresent,

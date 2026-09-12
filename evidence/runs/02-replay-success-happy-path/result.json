@@ -1,0 +1,17 @@
+{
+  "run_id": "replay-20260911-035312-4d5fa8",
+  "capability": {
+    "id": "cap_alpha_member_balance",
+    "name": "alpha.member.balance",
+    "version": "1.0.0"
+  },
+  "tenant": null,
+  "duration_ms": 452,
+  "evidence_dir": "evidence/runs/02-replay-success-happy-path",
+  "status": "success",
+  "outputs": {
+    "member_name": "Hopper, Grace",
+    "primary_share_balance": 310.42
+  },
+  "steps_executed": 7
+}

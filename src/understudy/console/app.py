@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import socket
 from collections.abc import AsyncIterator
 from datetime import datetime, timezone
 from pathlib import Path
@@ -261,6 +262,17 @@ async def serve(app: FastAPI, *, host: str = "127.0.0.1", port: int) -> tuple[uv
     session, so it must never bind beyond loopback. It does not keep out the operator's own
     browser — a cross-site page can open a WebSocket to loopback — which is why /ws/live checks
     the Origin header."""
+    # uvicorn logs a bind failure and retries rather than raising, which leaves the caller
+    # spinning on `server.started` forever. Claim the port ourselves first and fail with the fix.
+    with socket.socket() as probe:
+        probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            probe.bind((host, port))
+        except OSError as e:
+            # SystemExit, not OSError: the CLI already turns a message-carrying SystemExit into a
+            # usage error, and `except OSError` in main() would also swallow TimeoutError.
+            raise SystemExit(f"operator console cannot bind {host}:{port} ({e.strerror}); "
+                             f"pass --console-port with a free port") from e
     server = uvicorn.Server(uvicorn.Config(app, host=host, port=port, log_level="warning", lifespan="off"))
     task = asyncio.create_task(server.serve())
     while not server.started and not task.done():

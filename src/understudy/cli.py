@@ -40,6 +40,9 @@ def main(argv: list[str] | None = None) -> int:
         args = _parser().parse_args(argv)
         return args.fn(args)
     except SystemExit as e:  # argparse's --help / usage error; an in-process caller gets the code
+        if isinstance(e.code, str):  # a usage error raised deeper than the parser: a message, not a code
+            print(e.code, file=sys.stderr)
+            return 2
         return int(e.code or 0)
     except (KeyboardInterrupt, asyncio.CancelledError):  # Ctrl-C; with the console mounted it arrives as a cancel
         print("interrupted", file=sys.stderr)
@@ -57,14 +60,15 @@ def _app(args: argparse.Namespace) -> int:
 
 def _discover(args: argparse.Namespace) -> int:
     opts = DiscoveryOptions(
-        goal=args.goal, entry_url=args.url, inputs=dict(args.input), secret_names=args.secret, name=args.name,
-        tenant=args.tenant, app=args.app, headless=not args.headed, operator_policy_path=args.policy,
+        goal=args.goal, entry_url=args.url, inputs=_inputs(args), secret_names=args.secret, name=args.name,
+        tenant=args.tenant, app=args.app, headless=not args.headed, slow_mo_ms=args.slow_mo, echo=args.echo,
+        operator_policy_path=args.policy,
         evidence_root=args.evidence, capabilities_dir=args.capabilities, max_steps=args.max_steps, max_risk=args.max_risk,
     )
     try:
         result = asyncio.run(_drive(DiscoveryRun(opts), args))
-    except ConfigurationError as e:  # no API key: fails before a browser opens, with the fix
-        print(e, file=sys.stderr)
+    except (ConfigurationError, ValueError) as e:  # no API key, or an unreadable policy: fails
+        print(e, file=sys.stderr)                          # before a browser opens, with the fix
         return 1
     if result.capability_path is not None:
         print(result.capability_path)
@@ -98,12 +102,20 @@ def _invoke(args: argparse.Namespace) -> int:
 
 def _replay_cap(cap: Capability, args: argparse.Namespace) -> int:
     opts = ReplayOptions(
-        inputs=dict(args.input), tenant=args.tenant, headless=not args.headed, allow_draft=args.allow_draft,
+        inputs=_inputs(args), tenant=args.tenant, headless=not args.headed, slow_mo_ms=args.slow_mo, echo=args.echo,
+        allow_draft=args.allow_draft,
         operator_policy_path=args.policy, evidence_root=args.evidence, escalation_timeout_s=HUMAN_TIMEOUT_S + 30,
     )
     run = ReplayRun(cap, opts)
     if args.inject:
         mode, _, step = args.inject.partition("@")
+        if mode == "error_rate":
+            print("--inject: error_rate is sticky and probabilistic, so one fault before one step "
+                  "cannot express it; arm it from the target app's panel at / instead", file=sys.stderr)
+            return 2
+        if mode not in INJECTABLE:
+            print(f"--inject: unknown mode {mode!r}; one of {', '.join(INJECTABLE)}", file=sys.stderr)
+            return 2
         step = step or next((s.id for s in reversed(cap.steps) if s.expects_navigation), cap.steps[-1].id)
         if step not in {s.id for s in cap.steps}:
             print(f"--inject: no step {step!r} in {cap.key}; steps are {[s.id for s in cap.steps]}", file=sys.stderr)
@@ -222,6 +234,34 @@ def _name_version(s: str) -> tuple[str, str | None]:
     return name, version or None
 
 
+# The target app's per-request fault modes. `--inject` is a property of the DEMO, not the engine —
+# they are listed here so a typo is a usage error instead of an INTERNAL failure six steps in.
+# `error_rate` is deliberately absent: it is sticky and probabilistic, so it cannot be expressed
+# by a flag that arms one fault before one step. Arm it from the app's panel instead.
+INJECTABLE = ("not_found", "validation", "permission", "maintenance",
+              "session_expired", "app_error", "slow")
+
+
+def _inputs(args: argparse.Namespace) -> dict[str, str]:
+    """`--input` twice for the same name is a typo, not an override: silently taking the last
+    one would run the capability against something the caller did not ask for."""
+    seen: dict[str, str] = {}
+    for name, value in args.input:
+        if name in seen and seen[name] != value:
+            raise SystemExit(f"--input {name} given twice ({seen[name]!r} and {value!r}); pick one")
+        seen[name] = value
+    return seen
+
+
+def _policy_path(s: str) -> Path:
+    """Checked here rather than at load time: the policy is the security boundary, so a path
+    typo must be a usage error, never a run that proceeds under something else."""
+    p = Path(s)
+    if not p.is_file():
+        raise argparse.ArgumentTypeError(f"no operator policy at {p}")
+    return p
+
+
 def _kv(s: str) -> tuple[str, str]:
     name, sep, value = s.partition("=")
     if not sep or not name:
@@ -236,7 +276,8 @@ def _parser() -> argparse.ArgumentParser:
     def inputs(sp: argparse.ArgumentParser) -> None:
         sp.add_argument("--input", action="append", type=_kv, default=[], metavar="NAME=VALUE", help="typed input; repeatable")
         sp.add_argument("--tenant", help="replay the artifact's tenant override")
-        sp.add_argument("--policy", type=Path, default=Path("config/policy.toml"), metavar="PATH", help="operator policy (the security boundary)")
+        sp.add_argument("--policy", type=_policy_path, default=Path("config/policy.toml"), metavar="PATH",
+                        help="operator policy (the security boundary)")
 
     def dirs(sp: argparse.ArgumentParser, *, capabilities: bool = True) -> None:
         if capabilities:
@@ -245,6 +286,11 @@ def _parser() -> argparse.ArgumentParser:
 
     def browser(sp: argparse.ArgumentParser) -> None:
         sp.add_argument("--headed", action="store_true", help="show the browser")
+        sp.add_argument("--slow-mo", type=int, default=0, metavar="MS",
+                        help="pause MS between browser operations so a person can watch (try 500)")
+        sp.add_argument("--echo", action="store_true",
+                        help="print one line per event to stderr as it happens; a provider backoff is "
+                             "then visibly a backoff rather than a hang")
         sp.add_argument("--console", action="store_true", help="mount the operator console on this run's own event loop")
         sp.add_argument("--console-port", type=int, default=7373)
 
@@ -266,7 +312,9 @@ def _parser() -> argparse.ArgumentParser:
 
     r = sub.add_parser("replay", help="replay an artifact file with no model in the loop (a human testing a recording)")
     r.add_argument("artifact", type=Path, metavar="ARTIFACT.json")
-    r.add_argument("--inject", metavar="MODE[@STEP_ID]", help="arm a target-app fault right before a step (default: the last navigating step)")
+    r.add_argument("--inject", metavar="MODE[@STEP_ID]",
+                   help=f"arm a target-app fault right before a step (default: the last navigating "
+                        f"step). MODE is one of {', '.join(INJECTABLE)}")
     r.add_argument("--allow-draft", action="store_true", help="run a draft; invoke never does")
     inputs(r), dirs(r, capabilities=False), browser(r)
     r.set_defaults(fn=_replay)
@@ -274,7 +322,7 @@ def _parser() -> argparse.ArgumentParser:
     i = sub.add_parser("invoke", help="the agent path: run an APPROVED capability from the catalog by name")
     i.add_argument("name", metavar="NAME[@VERSION]")
     inputs(i), dirs(i)
-    i.set_defaults(fn=_invoke, headed=False, console=False, console_port=0, inject=None, allow_draft=False)
+    i.set_defaults(fn=_invoke, headed=False, slow_mo=0, echo=False, console=False, console_port=0, inject=None, allow_draft=False)
 
     c = sub.add_parser("catalog", help="list, describe, export as tools, or approve capabilities")
     cs = c.add_subparsers(dest="sub", required=True)

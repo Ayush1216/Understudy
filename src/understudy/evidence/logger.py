@@ -52,7 +52,6 @@ class RunLogger:
         self._echo = echo
         self._seq = 0
         self._subscribers: list[Subscriber] = []
-        path.parent.mkdir(parents=True, exist_ok=True)
 
     def emit(self, type: str, /, **payload: Any) -> dict[str, Any]:
         # A payload `seq=` or `ts=` would silently overwrite the header; `type=` is also the
@@ -64,7 +63,10 @@ class RunLogger:
             {"ts": datetime.now(timezone.utc).isoformat(), "run_id": self.run_id,
              "seq": self._seq, "type": type, **payload}
         ))
-        # Open/append/close per event: a crash mid-run must not lose buffered lines.
+        # Open/append/close per event: a crash mid-run must not lose buffered lines. The directory
+        # is made here rather than in __init__ so that a run which dies before its first event —
+        # a bad --console-port, a Ctrl-C during startup — leaves no empty directory behind.
+        self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(event, ensure_ascii=False) + "\n")
         if self._echo and type in _ECHOED:

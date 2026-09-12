@@ -52,10 +52,14 @@ class BrowserSession:
         viewport: Viewport | None = None,
         policy_gate: PolicyGate | None = None,
         on_violation: Callable[[str, str], None] | None = None,
+        slow_mo_ms: int = 0,
     ) -> BrowserSession:
         vp = viewport or Viewport()
         pw = await async_playwright().start()
-        browser = await pw.chromium.launch(headless=headless)
+        # slow_mo is a demo affordance only: it pauses between operations so a person can watch
+        # a replay that otherwise finishes in under two seconds. It changes no timing the run
+        # depends on — waits and checkpoint polls have their own clocks.
+        browser = await pw.chromium.launch(headless=headless, slow_mo=slow_mo_ms)
         context = await browser.new_context(viewport={"width": vp.width, "height": vp.height})
         page = await context.new_page()
         return cls(pw, browser, context, page, policy_gate=policy_gate, on_violation=on_violation)

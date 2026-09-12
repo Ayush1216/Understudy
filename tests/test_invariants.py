@@ -1,5 +1,6 @@
-"""The architecture test. The whole submission rests on one claim: replay runs with no model in
-the loop. That claim is enforced by the build, not by prose."""
+"""The architecture test. Two claims the rest of the submission rests on — replay runs with no
+model in the loop, and the Surface seam is a seam and not a Playwright wrapper — are enforced by
+the build, not by prose."""
 
 import ast
 import pathlib
@@ -46,3 +47,14 @@ def test_the_llm_client_lives_only_in_discover():
             if name.split(".")[0] in {"openai", "anthropic", "groq"}:
                 offenders.append(str(f.relative_to(SRC)))
     assert offenders == []
+
+
+def test_the_surface_protocol_imports_no_browser_driver():
+    """REPORT §1 and §4 claim `surface/protocol.py` is the seam a desktop resolver would implement.
+    That is only true while the seam itself names no browser: the moment it imports Playwright, the
+    Observation/TargetDescriptor/act contract has quietly become a browser contract."""
+    seam = SRC / "surface" / "protocol.py"
+    drivers = {"playwright", "selenium", "puppeteer", "pyppeteer"}
+    assert {n for n in _imports(seam) if n.split(".")[0] in drivers} == set()
+    # ...and everything the seam does import is either stdlib or our own pure-data schema.
+    assert {n.split(".")[0] for n in _imports(seam)} <= {"__future__", "dataclasses", "typing", "understudy"}

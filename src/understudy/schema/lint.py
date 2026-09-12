@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
+from typing import Any
 
 from .capability import Capability
 from .checkpoint import All, AnyOf, Checkpoint, UrlMatches, iter_checkpoints
@@ -27,6 +28,18 @@ class LintIssue(StrictModel):
 
 def _refs_in(obj) -> set[tuple[str, str]]:
     return set(TEMPLATE_REF.findall(json.dumps(obj, default=str)))
+
+
+def _strings(value: Any) -> Iterator[str]:
+    """Every string inside a dumped model, numbers and nulls excluded."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for v in value.values():
+            yield from _strings(v)
+    elif isinstance(value, list):
+        for v in value:
+            yield from _strings(v)
 
 
 def _trivially_true(cp: Checkpoint) -> bool:
@@ -97,11 +110,13 @@ def lint_capability(cap: Capability, known_values: Iterable[str] = ()) -> list[L
     if _trivially_true(cap.success_checkpoint):
         issues.append(LintIssue(code="L004", message="success_checkpoint is trivially true", path="$.success_checkpoint"))
 
-    # L006 no input example literal inside the success checkpoint — green once, useless after
-    success_json = json.dumps(cap.success_checkpoint.model_dump(mode="json"))
+    # L006 no input example literal inside the success checkpoint — green once, useless after.
+    # Only the checkpoint's TEXT is searched: against the serialized JSON, a deposit of 500 matches
+    # the digits of `wait_ms: 5000` and kills a recording whose success text is a screen heading.
+    success_text = list(_strings(cap.success_checkpoint.model_dump(mode="json")))
     for p in cap.inputs:
         ex = str(p.example) if p.example is not None else ""
-        if len(ex) >= 3 and ex in success_json:
+        if len(ex) >= 3 and any(ex in t for t in success_text):
             issues.append(LintIssue(code="L006", message=f"success_checkpoint embeds example value of input {p.name!r} ({ex!r}); use {{{{inputs.{p.name}}}}} or a value-independent condition", path="$.success_checkpoint"))
 
     # L007 no value-as-locator
